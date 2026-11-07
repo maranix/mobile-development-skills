@@ -10,6 +10,14 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 - [ ] Dependencies are injected at the entry point; logic holds no global singletons.
 - [ ] Transport types become domain models at the repository boundary.
 
+## Modularity
+
+- [ ] No feature or module imports another; dependencies point at core utilities, repositories, shared contracts, or the design system.
+- [ ] Data and behavior shared across features travel through a repository or service interface, not a direct import.
+- [ ] Side effects such as navigation leave a screen as callbacks supplied by the caller, so the screen does not name the destination feature.
+- [ ] Feature entry points and constructors take interfaces or function types, not concrete implementations: repositories, services, data sources, platform and navigation adapters alike.
+- [ ] A feature can be tested, kept, or replaced without compiling the features around it.
+
 ## State
 
 - [ ] Each piece of state has one owner; no second copy that can drift.
@@ -55,6 +63,7 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 ## Documentation
 
 - [ ] Plan was presented and approved by the user before code changes began; direction was confirmed after project creation.
+- [ ] The plan followed the request's intent, not its literal wording; names, flows, and steps were treated as fixed only when the user said so.
 - [ ] The feature, bug, or refactor has a `docs/plan.md` entry, and its status and sub-steps match the code.
 - [ ] `docs/architecture.md` matches the current modules, seams, dependencies, and commands.
 - [ ] `README.md` matches what the app does and how to build, run, and test it.
@@ -63,6 +72,8 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 ## Consistency
 
 - [ ] New code follows the style, naming, structure, and APIs already used in the source.
+- [ ] Names describe the domain concept; none were copied from the prompt or a snippet without checking what they mean.
+- [ ] Names and flows that depart from the request's wording are explained in the plan or the result.
 - [ ] No deprecated APIs or older coding styles; external snippets were modernized before use.
 - [ ] Unhandled errors and edge cases are named in a brief comment: what can fail, and why.
 - [ ] Comments and documentation describe intent; they are not a scratchpad or a transcript.

@@ -1,6 +1,6 @@
 ---
 name: mobile-conventions
-description: Conventions for Android, iOS, Flutter, and Kotlin Multiplatform apps, covering consistency, structure, layering, state, navigation, dependency injection, persistence, errors, lint, testing, verification, accessibility, and project documents, including the README. Use when changing, reviewing, or planning work in a mobile codebase.
+description: Conventions for Android, iOS, Flutter, and Kotlin Multiplatform apps, covering consistency, naming, feature boundaries, structure, layering, state, navigation, dependency injection, persistence, errors, lint, testing, verification, accessibility, and project documents, including the README. Use when changing, reviewing, or planning work in a mobile codebase.
 ---
 
 # Mobile app conventions
@@ -54,6 +54,12 @@ Reviewing rather than building? Walk [`reference/review-checklist.md`](reference
     - Commit regularly during feature work and bug fixes to keep progress traceable and rollbacks safe. Avoid monolithic commits with giant changelogs.
     - Target diffs under ±200 lines; stretch to ±500 lines only when necessary. When a logical change exceeds this, split it into sequential parts using the standard convention: `summary (1/x)`.
     - Exceptions: freshly initialized project scaffolds (commit the template intact without splitting) and changes too tightly coupled to separate without breaking context or buildability.
+16. **Read the request for intent, not just its words.** A prompt names things loosely: feature names, flows, steps, and usage are sketches unless the user says they are fixed. Work out the problem and the outcome first, then plan the shape that serves them. Where the literal instruction would produce a worse design, follow the intent and say what you changed and why.
+17. **Name a thing for what it is.** Prompt wording is a hint, not a naming standard. A feature, module, type, or variable takes the domain term that describes its job; a name that overstates, understates, or misstates it is a defect that outlives the task. Rename before the name spreads into routes, tests, and documents.
+18. **Keep features and modules independent.** Feature and module are the same unit here. One may depend on core utilities, repositories, shared contracts, and the design system; it may never import another feature. No `feature-b` import in `feature-a`, and no shared screen or view model between them. A boundary you cannot cut is a boundary you cannot test or replace.
+19. **Reach a sibling through a contract, not an import.** When one feature needs data or behavior another owns, route it through a service or repository, whichever fits: a repository when it is data, a service when it is behavior. The contract lives in shared code, the consumer depends on it, and the provider implements it at the composition root, so feature A never names feature B.
+20. **Leave side effects with the caller.** Navigation, sharing, and other outward actions leave a screen as callbacks the screen receives, not calls the screen makes. A call-to-action that opens feature B takes an `onOpenB: () -> Unit`; the route orchestrator supplies the real behavior and a test supplies a no-op. The screen stays unaware of feature B, so it can be tested, kept, or replaced alone.
+21. **Depend on interfaces, not implementations — for everything injected.** Feature entry points and constructors take interfaces or function types rather than concrete classes: repositories, services, data sources, platform and navigation adapters, and features themselves. A test can then pass a fake and another build can pass a different implementation. Build the concrete instance once at the edge. A parameter that drags a real database, network, or navigator into a test is a seam that leaked.
 
 ## Shared or platform code
 
@@ -82,8 +88,8 @@ A feature, bug, or refactor gets an entry in `docs/plan.md` before code. Archite
 ## Applying
 
 1. **Name the stack.** Done when you have read the matching reference above.
-2. **Record the work.** New feature or bug work gets a `docs/plan.md` entry first; a choice goes to `docs/decisions.md`. Note the architecture and README updates the entry will require. See [`reference/planning.md`](reference/planning.md).
+2. **Record the work.** New feature or bug work gets a `docs/plan.md` entry first; a choice goes to `docs/decisions.md`. State the intent behind the request and the names you will use; where a name or flow departs from the prompt's wording, record why. Note the architecture and README updates the entry will require. See [`reference/planning.md`](reference/planning.md).
 3. **Place the change.** Name the layer it belongs to and the seam it crosses. If you cannot name the layer, the design is not settled.
-4. **Check the seam.** Ask whether UI imports data, logic imports UI, or shared code imports platform APIs. Any yes means the dependency moves behind an interface.
+4. **Check the seam.** Ask whether UI imports data, logic imports UI, shared code imports platform APIs, or one feature imports another. Any yes means the dependency moves behind an interface.
 5. **Sync the documents.** Update `docs/architecture.md` and `README.md` in the same change. Done when the plan entry, architecture, README, and decisions agree.
 6. **Verify with the stack's tools.** Work in the stack reference's inner loop, then run its gate once for the batch. A green build is the floor, not the proof; rule 13 sets the budget.
