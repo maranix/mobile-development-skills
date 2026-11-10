@@ -6,34 +6,26 @@ disable-model-invocation: true
 
 # Scaffold a mobile app
 
-One-time recipe. The output is a skeleton that builds; the steps below add structure, tests, documentation, and one navigable screen, plus lint if chosen.
+One-time recipe. The output is a skeleton that builds; the steps add structure, tests, documentation, one navigable screen, and optional lint.
 
-**Generate, don't hand-write.** Start every project from the stack's recommended CLI or canonical wizard, then modify its output. The generated files are the baseline, so the project keeps the official template's structure and picks up upstream fixes.
+**Generate, don't hand-write.** Start from the stack's recommended CLI or canonical wizard, then modify its output. Generated files are the baseline, so the project keeps upstream structure and fixes.
 
-Run step 1 first, then read [`../mobile-conventions/SKILL.md`](../mobile-conventions/SKILL.md) and the stack reference it routes you to. Every step ends with a check; do not start the next step until it passes. Run each check with the stack reference's inner loop and save the full gate for the end (see [Keep the loop cheap](#keep-the-loop-cheap)).
+Run step 1, then read [`../mobile-conventions/SKILL.md`](../mobile-conventions/SKILL.md) and the stack reference it routes to. Each step ends with a check; do not proceed until it passes. Use the stack reference's inner loop; save the full gate for the end.
 
 ## 1. Read the request and fill the gaps
 
-The prompt is the brief. Extract what it states, infer the rest, and ask only for what remains. Do not re-ask what the prompt already answers.
+The prompt is the brief. Extract what it states, infer the rest, ask only what remains; never re-ask what it answers.
 
-**Extract.** The purpose and audience; the framework or SDK when named ("an Android app", "an iOS app", "a Flutter app", "KMP", "hybrid"); the app name, application or bundle ID, and organization when present; the features; and any stated constraints such as offline use, permissions, or target devices.
+**Extract:** purpose and audience; framework or SDK when named; app name, application/bundle ID, and organization when present; features; stated constraints such as offline use, permissions, or target devices.
 
-**Infer.** Choose these without asking, and say what you chose:
+**Infer and state:**
+- **Scope:** a request for an app means scaffold; "template", "starter", or "boilerplate" means vanilla, stopping after step 2.
+- **Dependencies:** from features. Offline means local persistence; camera and object detection mean a camera permission and an on-device inference library; sync means networking. Take the smallest set the first feature needs.
+- **Defaults:** platform state, navigation, DI, and standard lint (table).
+- **Identity:** no name means propose 3–5 with lowercase reverse-DNS IDs derived from the organization, and let the user pick. Availability is unverified unless asked.
+- **Agent instructions:** if the prompt asks for agent support or names Claude, Gemini, Copilot, or similar, create `AGENTS.md` without asking.
 
-- **Scope:** a request for an app means scaffold; "template", "starter", or "boilerplate" means vanilla, which stops after step 2.
-- **Dependencies:** from the features. Offline means local persistence; camera and object detection mean a camera permission and an on-device inference library; sync means networking. Take the smallest set from the table below that the first feature needs.
-- **Defaults:** platform state, navigation, and DI, plus standard lint. The table lists the recommendation first for each concern.
-- **Identity:** when the prompt has no name, propose 3–5 with lowercase reverse-DNS IDs derived from the organization, and let the user pick. Name availability is unverified unless the user asks you to check it.
-- **Agent instructions:** when the prompt asks for agent support or names Claude, Gemini, Copilot, or similar, create `AGENTS.md` without asking.
-
-**Ask for the gaps**, in one batch:
-
-- **Identity:** whichever of app name, application or bundle ID, organization, target platforms, and minimum OS versions the prompt does not give. For KMP, also shared UI or native UI, and Gradle or the Kotlin Toolchain.
-- **Framework**, only when the prompt neither names one nor makes it clear.
-- **License**, from a short menu (MIT, Apache-2.0, GPL-3.0, proprietary), with one recommendation and a one-line reason.
-- **Extras**, only when a feature needs a library the default does not cover, or the user asks to override a default.
-- **Lint**, only when the user wants something other than standard.
-- **Agent instructions**, for scaffold scope and unless the prompt already asked for them or named a tool: create `AGENTS.md`? Recommended, since it is how the next agent finds the docs and the conventions skill.
+**Ask for the gaps in one batch:** identity (name, IDs, organization, platforms, minimum OS; KMP also shared vs native UI and Gradle vs Kotlin Toolchain); framework only if unclear; license from a short menu (MIT, Apache-2.0, GPL-3.0, proprietary) with one recommendation and reason; extras only if a feature needs a library the defaults do not cover or the user overrides; lint only if non-standard; agent instructions for scaffold scope unless already asked (recommended, since the next agent finds the docs and skill).
 
 | Concern | Android | iOS | Flutter | KMP |
 | --- | --- | --- | --- | --- |
@@ -43,40 +35,37 @@ The prompt is the brief. Extract what it states, infer the rest, and ask only fo
 | Persistence | Room (default), DataStore (prefs) | SwiftData (default), Core Data | drift (default), sqflite; shared_preferences (prefs) | SQLDelight (default), Room KMP |
 | Networking | Retrofit/OkHttp (default), Ktor | URLSession (default), Alamofire | http (default), dio | Ktor (default) |
 
-Lint levels: **standard** (the stack's formatter and linter with the config named in the stack reference, warnings failing CI), **strict** (`very_good_analysis`, SwiftLint `--strict`, a larger detekt config), or **none** (skip step 5). Android and Xcode templates ship without a lint config; Flutter ships `analysis_options.yaml` with `flutter_lints`; KMP templates usually ship none.
+Lint levels: **standard** (the stack's formatter and linter per its reference, warnings failing CI), **strict** (`very_good_analysis`, SwiftLint `--strict`, a larger detekt config), or **none** (skip step 5). Android and Xcode templates ship without a lint config; Flutter ships `analysis_options.yaml` with `flutter_lints`; KMP templates usually ship none.
 
-**Record.** Write `docs/decisions.md` before generating: the request in one paragraph, the scope, and the agreed choices — stack, UI strategy, build, name, IDs, organization, platforms, minimum OS versions, state, navigation, DI, persistence, lint level, license, agent instructions, and the README outline that step 9 will fill in. Add a one-paragraph architecture sketch and link to `docs/architecture.md`, which step 10 fills in with the module tree, dependency direction, and libraries.
+**Record** `docs/decisions.md` before generating: the request in one paragraph, scope, and agreed choices—stack, UI strategy, build, name, IDs, organization, platforms, minimum OS, state, navigation, DI, persistence, lint, license, agent instructions, and the README outline. Add a one-paragraph architecture sketch linking to `docs/architecture.md`, which step 10 fills in.
 
-For example, "Create a new app for workout tracking which works offline and uses camera and object detection along with inference support to recognize my workouts and track them automatically" gives the purpose, so what remains is the stack, the name and ID, the organization, the platforms, and the license; offline means local persistence, and the camera and inference mean the camera permission and an on-device model, so state, navigation, and DI take the platform defaults.
+Example: "Create a new app for workout tracking which works offline and uses camera and object detection to recognize my workouts automatically" fixes purpose and features; remaining gaps are stack, name and ID, organization, platforms, and license. Offline means local persistence; camera and inference mean the camera permission and an on-device model; state, navigation, and DI take defaults.
 
-**Check:** every gap has an answer, and `docs/decisions.md` records the request and the agreed choices.
+**Check:** every gap has an answer, and decisions record the request and agreed choices.
 
 ## 2. Create and commit the project template
 
-Use the stack's official generator, in this order, and keep it current (`flutter upgrade`, `kotlin update`, the current Xcode and `android` CLI) so the template carries the latest fixes:
+Use the official generator, kept current (`flutter upgrade`, `kotlin update`, current Xcode and `android` CLI):
 
-- **Android:** prefer the `android` CLI: `android create empty-activity --name="My App" --application-id=com.example.myapp --output=./my-app`. Check that `android create` is available first. If it is missing, recommend installing it (it covers project creation, devices, screenshots, and SDK management) and ask before installing; install per https://developer.android.com/tools/android-cli. Only if the user explicitly declines, fall back to Android Studio > New Project. `gradle init` does not create an Android app.
-- **iOS:** use Xcode > File > New > Project > App. Xcode is the official tool; if the agent cannot drive the GUI, ask the user to run the wizard, then take over. Do not substitute a third-party generator unless the user asks for one.
-- **Flutter:** `flutter create --empty --org com.example --platforms=android,ios my_app`. `--empty` skips the counter sample.
-- **KMP:** JetBrains recommends the Kotlin Toolchain for new projects: `kotlin init` (install with `curl -fsSL https://kotl.in/install.sh | sh`). If `kotlin init` is unavailable, recommend the Toolchain and ask before installing; if declined, use the Gradle path: the wizard at `kmp.jetbrains.com` or IDE > New Project > Kotlin Multiplatform. The Toolchain is pre-1.0; choose Gradle when the project must stay on the standard build.
+- **Android:** prefer `android create empty-activity --name="My App" --application-id=com.example.myapp --output=./my-app`. Check that `android create` exists first; if missing, recommend installing it (it covers creation, devices, screenshots, and SDK management) and ask before installing per https://developer.android.com/tools/android-cli. Only if declined, fall back to Android Studio > New Project. `gradle init` does not create an Android app.
+- **iOS:** Xcode > File > New > Project > App. If the agent cannot drive the GUI, ask the user to run the wizard, then take over. No third-party generator unless asked.
+- **Flutter:** `flutter create --empty --org com.example --platforms=android,ios my_app`.
+- **KMP:** `kotlin init` (install with `curl -fsSL https://kotl.in/install.sh | sh`). If unavailable, recommend the Kotlin Toolchain and ask before installing; if declined, use the Gradle path via `kmp.jetbrains.com` or IDE > New Project > Kotlin Multiplatform. The Toolchain is pre-1.0; choose Gradle when the project must stay on the standard build.
 
-Generate the smallest app the tool offers. Keep the versions the generator chose; see [Keep the generator's toolchain and dependencies](#keep-the-generators-toolchain-and-dependencies) before changing a toolchain, wrapper, platform target, SDK, or dependency version.
+Generate the smallest app the tool offers. Keep the versions the generator chose (see [Keep the generator's toolchain](#keep-the-generators-toolchain-and-dependencies)).
 
-**Check:** the empty app builds on the generator's toolchain and dependencies (JDK, Gradle, Xcode, SDK, Flutter, Dart, packages), and launches when a device or simulator is already attached. Do not provision one without asking.
+**Check:** the empty app builds on the generator's toolchain and dependencies (JDK, Gradle, Xcode, SDK, Flutter, Dart, packages) and launches if a device or simulator is already attached. Never provision one without asking.
 
-**Commit the template:** Do not proceed with implementation or modifications immediately. Commit the freshly generated template intact as its own commit (do not federate or split into parts) to establish the clean upstream baseline in git history.
+**Commit the template:** commit the freshly generated template intact as its own commit (no split) to establish the clean upstream baseline.
 
-**Pause, plan, and confirm direction:** Do not automatically begin implementation or modify the template.
-1. **Present the plan:** Lay out the architecture, dependencies, and steps in `docs/plan.md` to align with the user's vision.
-2. **Ask for direction:** Ask the user how to proceed before writing code:
-   - *Full scaffold (one-shot):* Continue through steps 3–11 to build the complete foundation.
-   - *Targeted setup:* Focus first on specific dependencies, build logic, or design system.
-   - *Direct feature work:* Jump straight into implementing a specific feature or domain module.
-3. **Wait for approval:** Do not modify code until the user approves the plan and confirms direction. Once approved, invoke `mobile-conventions` and proceed on the chosen path with small, atomic commits.
+**Pause, plan, and confirm direction:** do not modify the template.
+1. **Present the plan:** architecture, dependencies, and steps in `docs/plan.md`.
+2. **Ask for direction:** *full scaffold* (steps 3–11), *targeted setup* (specific dependencies, build logic, or design system first), or *direct feature work* (a specific feature or domain module).
+3. **Wait for approval**, then invoke `mobile-conventions` and proceed with small atomic commits.
 
 ## 3. Apply the folder structure
 
-Create the feature-first tree from the stack reference, with one shared core module and no features yet. The composition root is the only place that constructs services.
+Create the feature-first tree from the stack reference, one shared core module, no features yet. The composition root constructs services.
 
 **Check:** the tree matches the reference and each module declares its dependency direction.
 
@@ -88,82 +77,78 @@ Construct the graph at the entry point and pass dependencies down. Start with co
 
 ## 5. Add formatting, lint, and CI
 
-Skip this step when the user chose None. Otherwise use the level from step 1: add the stack's formatter and linter with config at the repository root, then a CI job that runs format-check, lint, and tests on every push, failing on warnings.
+Skip if None. Use the chosen level: the stack's formatter and linter with root config, then a CI job running format-check, lint, and tests on every push, failing on warnings.
 
-**Check:** a deliberately misformatted line fails the local check (revert it), and CI is green on the empty app.
+**Check:** a deliberately misformatted line fails locally (revert it), and CI is green on the empty app.
 
 ## 6. Add the navigation skeleton
 
-Create two typed routes and one screen that moves between them. Make a deep link resolve to the second route.
+Two typed routes and one screen moving between them; a deep link resolves to the second route.
 
 **Check:** the deep link opens the right screen and back returns to the first.
 
 ## 7. Add the test harness
 
-One unit test for logic, one UI test for the screen, and both running in CI. Add the CI job here if step 5 was skipped. Use fakes at the seams; no live network in tests.
+One unit test for logic, one UI test for the screen, both in CI. Add the CI job here if step 5 was skipped. Use fakes at the seams; no live network.
 
-**Check:** a failing assertion fails the local test task (revert it), and the suite runs in CI.
+**Check:** a failing assertion fails locally (revert it), and the suite runs in CI.
 
 ## 8. Add the accessibility baseline
 
-Label the interactive elements, set the minimum target size, and check the screen at the largest text size.
+Label interactive elements, set the minimum target size, and check the screen at the largest text size.
 
-**Check:** the accessibility inspector reports no missing labels, and the layout does not clip at the largest scale.
+**Check:** the inspector reports no missing labels, and the layout does not clip at the largest scale.
 
 ## 9. Add the README and license
 
-Write `README.md` from `docs/decisions.md` and the original description: what the app does, the platforms it targets, prerequisites, configuration, the commands to build, run, and test, the folder layout, and the license. Add the chosen `LICENSE` file at the repository root, or an "All rights reserved" notice in the README when the user chose proprietary. Treat it as a living document: step 10 checks it against the architecture, and future feature work updates it with the plan entry. Write it after the build commands and versions stop changing, so a prose edit does not force another verification cycle.
+Write `README.md` from decisions and the original description: purpose, platforms, prerequisites, configuration, build/run/test commands, layout, and license. Add the chosen `LICENSE`, or an "All rights reserved" notice for proprietary. Treat it as living: step 10 checks it against the architecture; future work updates it with the plan entry. Write it after commands and versions settle.
 
-**Check:** a newcomer can build and run from the README alone, and the license file or notice matches `docs/decisions.md`.
+**Check:** a newcomer can build and run from the README alone, and the license matches decisions.
 
 ## 10. Record the decisions and architecture
 
-Update `docs/decisions.md` with anything the build changed: the actual package name, the dependencies that were added, and the lint config. Write `docs/architecture.md`: the feature and module tree, the seam each layer crosses, dependency direction, the libraries with versions, and how the platforms split for KMP or Flutter. Create `docs/plan.md` with an empty `## Next` checklist and the scaffold under `## Done`. Re-read `README.md` and make it agree with the architecture: the same feature names, commands, and dependencies. Do this after the build settles, so the commands and versions you record are final. Future work reads all four before proposing a different shape.
+Update decisions with what the build changed (actual package name, added dependencies, lint config). Write architecture: feature and module tree, seams, dependency direction, libraries and versions, platform split. Create plan with an empty `## Next` and the scaffold under `## Done`. Re-read README and align names, commands, and dependencies. Do this after the build settles; future work reads all four first.
 
-**Check:** all four files exist, agree with each other, and a new contributor can name every choice and find every module's dependencies from them alone.
+**Check:** all four files exist, agree, and let a contributor name every choice and dependency from them alone.
 
 ## 11. Add agent instructions
 
-When the user agreed, or the prompt asked for agent support, write `AGENTS.md` at the repository root. It should tell the next agent to:
+If agreed or asked, write `AGENTS.md` telling the next agent to:
 
-- Read `docs/decisions.md`, `docs/architecture.md`, `docs/plan.md`, and `README.md` before changing code.
-- Invoke `mobile-conventions` before changing or reviewing code, and follow the stack reference it selects.
-- Start every feature, bug, or refactor with a `docs/plan.md` entry.
-- Update `docs/architecture.md` and `README.md` in the same change whenever the shape, dependencies, commands, or user-facing behavior change.
-- Treat a change as incomplete while the plan entry, architecture, README, and decisions disagree.
-- Run build, lint, and tests before calling work done.
+- read decisions, architecture, plan, and README before changing code;
+- invoke `mobile-conventions` and follow its stack reference;
+- start every feature, bug, or refactor with a plan entry;
+- update architecture and README in the same change when shape, dependencies, commands, or behavior change;
+- treat work as incomplete while plan, architecture, README, and decisions disagree;
+- run build, lint, and tests before calling work done.
 
-If the prompt named a specific tool, add that tool's file (`CLAUDE.md`, `GEMINI.md`) as a one-line pointer to `AGENTS.md`.
+If the prompt named a tool, add `CLAUDE.md` or `GEMINI.md` as a one-line pointer to `AGENTS.md`. Vanilla: skip unless asked; then point only at decisions and the skill.
 
-For vanilla, skip this step unless the prompt asked for agent support; then point at `docs/decisions.md` and the conventions skill only, since the other documents do not exist.
-
-**Check:** a fresh agent session can find the docs and the conventions skill from `AGENTS.md` alone, and knows that a plan entry comes first and the other documents move with the code.
+**Check:** a fresh agent finds the docs and skill from `AGENTS.md` alone and knows a plan entry comes first and docs move with code.
 
 ## Keep the generator's toolchain and dependencies
 
-- Treat the generator's toolchain, compiler, SDK, platform deployment targets, and dependencies across all variants (Android, iOS, Flutter, KMP) as the baseline. A generated project that builds is the reference; do not replace or downgrade its versions to satisfy a secondary tool, linter, formatter, or library.
-- If a linter, formatter, or third-party package does not support them, stop and report a separate decision: name the package or tool, the versions it demands, what the generator provisioned, and the three options (upgrade the package/tool or find a modern replacement, leave it out, accept the downgrade). Ask before choosing.
-- Never pin an older runtime, SDK, compiler, or dependency version silently, and never add a lint suppression or ignore comment whose only job is to hide version skew. If the tool/package is dropped, record why in `docs/decisions.md`; if it stays, record the accepted downgrade.
-- Repeat an unresolved conflict in the final result, so it is not buried in build or package-manager output.
+- Treat the generator's toolchain, compiler, SDK, deployment targets, and dependencies across all variants (Android, iOS, Flutter, KMP) as the baseline; a generated project that builds is the reference. Do not replace or downgrade versions for a secondary tool, linter, formatter, or library.
+- If a tool cannot support them, stop and report a decision: name the package or tool, the versions it demands, what was provisioned, and the three options (upgrade/replace, omit, accept downgrade). Ask before choosing.
+- Never silently pin an older runtime, SDK, compiler, or dependency, and never add a suppression whose only job is to hide version skew. Record dropped packages or accepted downgrades in decisions.
+- Repeat unresolved conflicts in the final result.
 
-Done when the project runs on the provisioned toolchain and dependency versions, or the user has chosen the exception and it is recorded.
+Done when the project runs on the provisioned versions, or the user chose an exception and it is recorded.
 
 ## Keep the loop cheap
 
-A scaffold is one long edit; the tooling should not dominate it.
-
-- **Probe before writing config.** In one command, list the installed SDK platforms and Build-Tools, the JDK, and the generator, wrapper, linter, and plugin versions. Choose versions that are installed and compatible, and record why in `docs/decisions.md`. An unresolvable `compileSdk` or a linter that cannot parse the JDK costs a failed build each time it is discovered late.
-- **Warm the toolchain once.** The generator and the first build download the wrapper, dependencies, and sometimes a JDK. Let that run once, keep the build daemon alive afterwards, and do not pass `--no-daemon`.
-- **Use the inner loop while writing code.** Compile the touched target, run one filtered test, or analyze one directory. The stack reference lists the commands.
-- **Gate once per batch.** Run the formatter check, linter, full tests, and build after a group of edits, not after each file. Prose changes to the four documents need no code gate; check them against the code and their links instead.
-- **Batch before the gate.** Fix every known import, lint, and formatting problem in one pass, then verify once. Ten small builds cost more than one review of the diff.
-- **Check for a device, do not create one.** Probe with `adb devices`, `xcrun simctl list devices booted`, or `flutter devices`. Never download an emulator image, simulator runtime, or platform pack, or create a device, without asking and naming the download size.
-- **Write the commands last.** Generate the README and architecture commands and versions after the build stops changing, so prose does not force another gate.
+- **Probe before config:** in one command, list installed SDK platforms and Build-Tools, the JDK, and generator, wrapper, linter, and plugin versions. Choose installed, compatible versions and record why.
+- **Warm once:** let the generator and first build download the wrapper, dependencies, and sometimes a JDK once; keep the daemon alive; no `--no-daemon`.
+- **Inner loop while writing:** compile the touched target, run one filtered test, or analyze one directory (commands in the stack reference).
+- **Gate once per batch:** format check, lint, full tests, and build after a group of edits. Prose changes need no code gate; check them against the code and links.
+- **Batch before the gate:** fix all known import, lint, and formatting problems in one pass, then verify once.
+- **Check for a device, don't create one:** probe `adb devices`, `xcrun simctl list devices booted`, or `flutter devices`; never download an image, runtime, or platform pack, or create a device, without asking and naming the size.
+- **Write commands last:** README and architecture commands and versions after the build stops changing.
 
 Done when the scaffold needed one cold build, a few inner-loop checks, and one final gate.
 
 ## Keep the skeleton small
 
-- Ship one navigation example, not a feature.
+- One navigation example, not a feature.
 - Recommend the platform's built-in option first; a package earns its place when the first feature needs it.
-- Delete generator sample code, counter state, and placeholder TODOs in the first commit after the initial template commit.
+- Delete generator sample code, counter state, and placeholder TODOs in the first commit after the template commit.
