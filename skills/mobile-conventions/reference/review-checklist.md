@@ -72,6 +72,7 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 
 ## Consistency
 
+- [ ] The diff touches only the files and lines the change owns; no unrelated reformatting, reordering, renames, or refactors.
 - [ ] New code follows the source's structure, architecture, and API choices.
 - [ ] Added code uses the newest syntax the project's language version supports; it does not copy an older form from surrounding code or a snippet.
 - [ ] Edited code keeps its surrounding style unless the edit already touches the construct; deleted code was not modernized.
