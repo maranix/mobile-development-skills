@@ -71,13 +71,15 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 
 ## Consistency
 
-- [ ] New code follows the style, naming, structure, and APIs already used in the source.
+- [ ] New code follows the source's naming, structure, architecture, and API choices.
+- [ ] Added code uses the newest syntax the project's language version supports; it does not copy an older form from surrounding code or a snippet.
+- [ ] Edited code keeps its surrounding style unless the edit already touches the construct; deleted code was not modernized.
+- [ ] The language/SDK version was checked and any official language or framework skill was consulted.
 - [ ] Names describe the domain concept; none were copied from the prompt or a snippet without checking what they mean.
 - [ ] Names and flows that depart from the request's wording are explained in the plan or the result.
-- [ ] No deprecated APIs or older coding styles; external snippets were modernized before use.
+- [ ] Added code that could not use the current syntax has a `TODO` or a documented reason, plus a probable replacement.
 - [ ] Unhandled errors and edge cases are named in a brief comment: what can fail, and why.
 - [ ] Comments and documentation describe intent; they are not a scratchpad or a transcript.
-- [ ] An older snippet that could not be modernized has a `TODO` or a documented source and older API/style, plus a probable replacement.
 
 ## Per stack
 

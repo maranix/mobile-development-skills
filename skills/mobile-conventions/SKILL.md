@@ -24,6 +24,10 @@ KMP has a platform UI too: read the KMP reference, then the Android or iOS refer
 
 Reviewing rather than building? Walk [`reference/review-checklist.md`](reference/review-checklist.md) after the stack reference.
 
+## Language and framework skills
+
+Before writing code, check the available skills for the detected language, SDK, or framework and load the relevant one; use it as the source of truth for current syntax and idioms. Do this without being asked. This skill owns architecture and process, not a versioned feature list. If no skill exists, consult the official docs for the project's language version.
+
 ## Universal rules
 
 1. **Layer by knowledge, not file type.** UI renders and forwards intent; logic owns rules and state; data owns I/O. DTOs, rows, and JSON become domain models at the data seam. A type importing both a UI framework and a network client marks a crossed seam.
@@ -37,7 +41,7 @@ Reviewing rather than building? Walk [`reference/review-checklist.md`](reference
 9. **Test at the seam.** Unit-test logic with fakes, contract-test data against a fake server or database, and keep one or two end-to-end UI flows per feature. Snapshots belong to the design system, not every screen.
 10. **Format and lint are automated.** The formatter owns layout and the linter owns rules, so review attention goes to design. Wire both into build and CI; fix a wrong rule, not the call site.
 11. **Plan first, confirm direction, move docs with code.** Every feature, bug, refactor, or post-scaffold implementation gets a `docs/plan.md` entry; present it and get approval before code; confirm direction after project creation. `docs/architecture.md` and `README.md` move in the same atomic commit as shape, dependencies, commands, or behavior. Docs disagreeing means not done.
-12. **Match the codebase, then modernize.** Follow existing style, naming, structure, and APIs unless told otherwise. Prefer the simplest established idiom (including error handling) over a new API or copied code. Use the targeted language and SDK's current idiom; no deprecated APIs or older styles. Modernize snippets, or mark `TODO`/cite the source and older API plus a replacement. Don't ask—fix or record why not. Comment unhandled errors and edge cases (what fails, why); comments state intent, not a transcript. A reader should not have to simulate the code to find them.
+12. **Match structure; write added code in the current idiom.** Follow existing naming, structure, architecture, and API choices unless told otherwise. For every line you add, use the newest syntax the project's language version supports, including syntactic sugar; newer syntax is not a "new API" tradeoff because it changes expression, not behavior. Prefer the simplest established approach for logic, error handling, and dependencies, not for syntax. This covers all added code, not only copied snippets; do this without being asked. Edited code keeps its surrounding style unless the edit already touches the construct; deleted code is not modernized. Check the language/SDK version and use any official language or framework skill available; it is authoritative for the current form. The project's language version is the ceiling: use the newest syntax it supports, never an older form than necessary, and do not propose an upgrade just to use newer syntax. If the current form cannot be used, mark `TODO` or record why. Comment unhandled errors and edge cases (what fails, why); comments state intent, not a transcript. A reader should not have to simulate the code to find them.
 13. **Verify in proportion.** Inner loop: compile or analyze only what changed, plus one filtered test, so it costs seconds. Gate: format check, lint, full tests, and build once per batch, not per file. Keep the daemon warm, batch edits, skip the gate for prose. Probe SDK, JDK, and tool versions before build config; never provision an emulator, runtime, or large SDK without asking. If the gate runs more than a handful of times for one change, the loop is too expensive; fix it. Commands: stack reference.
 14. **Keep the generator's toolchain and dependencies.** Keep the provisioned SDK, platform target, compiler, build tool, and dependency versions across all variants; never downgrade for a tool, linter, or library. Surface a conflict as a decision (tool/package, required versions, provisions replaced); the user chooses upgrade/replace, omit, or accept downgrade. Never silently pin older versions or suppress to hide skew. A silent downgrade forks the project from its generator. Record it in `docs/decisions.md`; repeat unresolved conflicts in the result.
 15. **Commit small, atomic, and often.** Small commits keep rollbacks safe and history readable. Target ±200 lines, ±500 max; split larger as `summary (1/x)`. Exceptions: fresh scaffolds (commit intact) and inseparable changes.
@@ -47,6 +51,10 @@ Reviewing rather than building? Walk [`reference/review-checklist.md`](reference
 19. **Siblings through contracts, not imports.** Repository for data, service for behavior; contract in shared code, the consumer depends on it, and the provider implements it at the composition root; feature A never names feature B.
 20. **Side effects with the caller.** Navigation and sharing are callbacks (`onOpenB: () -> Unit`), not calls the screen makes. The screen stays unaware of feature B, so it can be tested, kept, or replaced alone.
 21. **Interfaces for everything injected.** Feature entry points and constructors take interfaces or function types for repositories, services, data sources, platform and navigation adapters, and features; build the concrete instance once at the edge. A test can pass a fake, and another build can pass a different implementation. A test needing a real database, network, or navigator has a leaked seam.
+
+## Rule conflicts
+
+When rules compete, apply them in this order: user intent, correctness, seams and architecture, current language idiom for added code, local consistency. Local consistency never licenses superseded syntax in new code. If a rule cannot be met, name it and say why.
 
 ## Shared or platform code
 
@@ -76,6 +84,7 @@ A feature, bug, or refactor gets a `docs/plan.md` entry before code. Architectur
 1. **Name the stack.** Read the matching reference above.
 2. **Record the work.** A feature or bug gets a `docs/plan.md` entry; a choice goes to `docs/decisions.md`. State intent, names, any departure from prompt wording, and the doc updates required. See [`reference/planning.md`](reference/planning.md).
 3. **Place the change.** Name its layer and seam; if you cannot, the design is not settled.
-4. **Check the seam.** UI importing data, logic importing UI, shared importing platform, or feature importing feature means move the dependency behind an interface.
-5. **Sync the documents.** Update architecture and README in the same change. Done when plan, architecture, README, and decisions agree.
-6. **Verify.** Stack inner loop, then one gate per batch; rule 13 sets the budget.
+4. **Write in the current idiom.** Check the language/SDK version and use any official stack skill; use the newest syntax that version supports for every line you add. Do not copy older surrounding syntax into new code.
+5. **Check the seam.** UI importing data, logic importing UI, shared importing platform, or feature importing feature means move the dependency behind an interface.
+6. **Sync the documents.** Update architecture and README in the same change. Done when plan, architecture, README, and decisions agree.
+7. **Verify.** Stack inner loop, then one gate per batch; rule 13 sets the budget.

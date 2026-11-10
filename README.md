@@ -23,8 +23,8 @@ Both skills work with any agent that supports the [Agent Skills](https://agentsk
 
 ## Why these skills
 
-- **Consistency first, then modernization.** New code follows the style and APIs already in the source, uses the current idiom of the targeted SDK instead of a deprecated one, and modernizes copied snippets before adding them. Unhandled failures are named in a brief comment instead of being left for the reader to discover.
-- **One spine, four stacks.** The same rules apply everywhere; each stack reference supplies the idiom, the recommended libraries, and the platform-specific gotchas.
+- **Consistency for structure, current idiom for added code.** New code follows the source's naming, structure, architecture, and API choices, but every added line uses the newest syntax the project's language version supports. The skill loads any official language or framework skill as the authority on current syntax, and never proposes an upgrade just to use newer syntax. Unhandled failures are named in a brief comment instead of being left for the reader to discover.
+- **One spine, four stacks.** The same rules apply everywhere; each stack reference supplies the architecture idiom, recommended libraries, and platform gotchas, while official language or framework skills supply current syntax.
 - **Seams over folder conventions.** Every boundary between UI, logic, data, and platform code is a cut you can substitute. The skills keep those seams narrow and testable instead of enforcing a directory shape.
 - **Official generators first.** New projects start from the stack's recommended CLI or canonical wizard, never a hand-built tree, so the result keeps upstream structure and fixes.
 - **Cheap feedback, one honest gate.** The inner loop compiles the touched target and runs one filtered test; the formatter check, linter, full tests, and build run once per batch. Toolchain versions are probed before they reach build files, and no emulator or runtime is downloaded unasked.
@@ -126,7 +126,7 @@ mobile-scaffold: Scaffold a Flutter app for tracking expenses.
 
 Agents with slash commands take the name as a command; agents without one take the name at the start of the request.
 
-The conventions skill selects the stack reference from the build files, reads it, and applies the rules. The scaffold skill runs its discovery step first, then generates and layers the project. Neither skill is a runtime dependency: they are instructions the agent follows in the conversation.
+The conventions skill selects the stack reference from the build files, reads it, loads any official language or framework skill, and applies the rules. The scaffold skill runs its discovery step first, then generates and layers the project. Neither skill is a runtime dependency: they are instructions the agent follows in the conversation.
 
 ## Supported agents
 
