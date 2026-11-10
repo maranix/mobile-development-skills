@@ -17,6 +17,7 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 - [ ] Side effects such as navigation leave a screen as callbacks supplied by the caller, so the screen does not name the destination feature.
 - [ ] Feature entry points and constructors take interfaces or function types, not concrete implementations: repositories, services, data sources, platform and navigation adapters alike.
 - [ ] A feature can be tested, kept, or replaced without compiling the features around it.
+- [ ] The change does not split one responsibility across more classes, files, or modules than the context needs; each new entity has a distinct responsibility, state, lifecycle, or seam.
 
 ## State
 
@@ -71,11 +72,11 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 
 ## Consistency
 
-- [ ] New code follows the source's naming, structure, architecture, and API choices.
+- [ ] New code follows the source's structure, architecture, and API choices.
 - [ ] Added code uses the newest syntax the project's language version supports; it does not copy an older form from surrounding code or a snippet.
 - [ ] Edited code keeps its surrounding style unless the edit already touches the construct; deleted code was not modernized.
 - [ ] The language/SDK version was checked and any official language or framework skill was consulted.
-- [ ] Names describe the domain concept; none were copied from the prompt or a snippet without checking what they mean.
+- [ ] Every class, interface, variable, constant, feature, and module is named for its role in this codebase; prompt or reference names were used only where they fit context and purpose.
 - [ ] Names and flows that depart from the request's wording are explained in the plan or the result.
 - [ ] Added code that could not use the current syntax has a `TODO` or a documented reason, plus a probable replacement.
 - [ ] Unhandled errors and edge cases are named in a brief comment: what can fail, and why.

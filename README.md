@@ -23,9 +23,10 @@ Both skills work with any agent that supports the [Agent Skills](https://agentsk
 
 ## Why these skills
 
-- **Consistency for structure, current idiom for added code.** New code follows the source's naming, structure, architecture, and API choices, but every added line uses the newest syntax the project's language version supports. The skill loads any official language or framework skill as the authority on current syntax, and never proposes an upgrade just to use newer syntax. Unhandled failures are named in a brief comment instead of being left for the reader to discover.
+- **Consistency for structure, current idiom for added code.** New code follows the source's structure, architecture, and API choices; names are chosen for their role in context, not copied from the prompt. Every added line uses the newest syntax the project's language version supports. The skill loads any official language or framework skill as the authority on current syntax, and never proposes an upgrade just to use newer syntax. Unhandled failures are named in a brief comment instead of being left for the reader to discover.
 - **One spine, four stacks.** The same rules apply everywhere; each stack reference supplies the architecture idiom, recommended libraries, and platform gotchas, while official language or framework skills supply current syntax.
 - **Seams over folder conventions.** Every boundary between UI, logic, data, and platform code is a cut you can substitute. The skills keep those seams narrow and testable instead of enforcing a directory shape.
+- **Name by role, split by responsibility.** Classes, interfaces, variables, constants, and modules take the domain term that fits their context and purpose; prompt or reference names are only a starting point. Split only when a distinct responsibility, state, lifecycle, or seam earns it, so maintenance and data flow stay easy to follow.
 - **Official generators first.** New projects start from the stack's recommended CLI or canonical wizard, never a hand-built tree, so the result keeps upstream structure and fixes.
 - **Cheap feedback, one honest gate.** The inner loop compiles the touched target and runs one filtered test; the formatter check, linter, full tests, and build run once per batch. Toolchain versions are probed before they reach build files, and no emulator or runtime is downloaded unasked.
 - **The generator owns the toolchain and dependencies.** The official CLI or wizard's platform targets, toolchain, SDK, compiler, and dependency versions stand across every variant (Android, iOS, Flutter, KMP). A tool or package that cannot run on them is surfaced as a decision with the exact versions, never fixed by downgrading the project or adding a suppression that hides the skew.
@@ -38,7 +39,7 @@ Both skills work with any agent that supports the [Agent Skills](https://agentsk
 
 ### [`mobile-conventions`](skills/mobile-conventions/SKILL.md)
 
-The shared reference for changing or reviewing a mobile codebase: consistency, structure, layering, state ownership, navigation, dependency injection, persistence, error handling, formatting, lint, testing, verification, accessibility, and project documents, including keeping the README in sync.
+The shared reference for changing or reviewing a mobile codebase: consistency, naming, granularity, structure, layering, state ownership, navigation, dependency injection, persistence, error handling, formatting, lint, testing, verification, accessibility, and project documents, including keeping the README in sync.
 
 A per-stack reference adds the idiom and gotchas. A [review checklist](skills/mobile-conventions/reference/review-checklist.md) turns the rules into pass/fail items, and a [planning reference](skills/mobile-conventions/reference/planning.md) covers the project documents and the feature and bug intake.
 
