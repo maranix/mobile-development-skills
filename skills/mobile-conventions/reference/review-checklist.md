@@ -63,12 +63,15 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 
 ## Documentation
 
-- [ ] Plan was presented and approved by the user before code changes began; direction was confirmed after project creation.
-- [ ] The plan followed the request's intent, not its literal wording; names, flows, and steps were treated as fixed only when the user said so.
-- [ ] The feature, bug, or refactor has a `docs/plan.md` entry, and its status and sub-steps match the code.
-- [ ] `docs/architecture.md` matches the current modules, seams, dependencies, and commands.
+- [ ] Any plan shown to the user was approved before code; direction was confirmed after project creation.
+- [ ] The plan followed the request's intent, not its literal wording.
+- [ ] A tracked feature or behavior change has a short plan entry; a rename, dependency bump, internal refactor, or trivial fix added none.
+- [ ] Plan entries are at most about twelve lines with no file list, commit message, or per-step log; completed entries are one line and dropped entries are deleted.
+- [ ] Architecture and any design doc describe only the current state: no step list, change history, or superseded design.
+- [ ] Every doc update deleted or rewrote the text it made false; the diff is not all additions.
+- [ ] The doc diff is proportional: a rename or small fix is about ten lines, a feature about thirty, and a scaffold one page per doc.
 - [ ] `README.md` matches what the app does and how to build, run, and test it.
-- [ ] No document describes a feature or command that no longer exists.
+- [ ] No document describes a feature, command, or plan item that no longer exists.
 
 ## Language level
 

@@ -37,7 +37,7 @@ The prompt is the brief. Extract what it states, infer the rest, ask only what r
 
 Lint levels: **standard** (the stack's formatter and linter per its reference, warnings failing CI), **strict** (`very_good_analysis`, SwiftLint `--strict`, a larger detekt config), or **none** (skip step 5). Android and Xcode templates ship without a lint config; Flutter ships `analysis_options.yaml` with `flutter_lints`; KMP templates usually ship none.
 
-**Record** `docs/decisions.md` before generating: the request in one paragraph, scope, and agreed choices—stack, UI strategy, build, name, IDs, organization, platforms, minimum OS, language level, state, navigation, DI, persistence, lint, license, agent instructions, and the README outline. Add a one-paragraph architecture sketch linking to `docs/architecture.md`, which step 10 fills in.
+**Record** a one-page `docs/decisions.md` before generating: the request in one paragraph and a compact table of the choices that are expensive to reverse—stack, name and IDs, platforms and minimum OS, state, navigation, DI, persistence, lint, license, language level. Do not record the exploration, defaults you did not change, or the build steps. Add a one-paragraph architecture sketch linking to `docs/architecture.md`, which step 10 fills in.
 
 Example: "Create a new app for workout tracking which works offline and uses camera and object detection to recognize my workouts automatically" fixes purpose and features; remaining gaps are stack, name and ID, organization, platforms, and license. Offline means local persistence; camera and inference mean the camera permission and an on-device model; state, navigation, and DI take defaults.
 
@@ -59,7 +59,7 @@ Generate the smallest app the tool offers. Keep the versions the generator chose
 **Commit the template:** commit the freshly generated template intact as its own commit (no split) to establish the clean upstream baseline.
 
 **Pause, plan, and confirm direction:** do not modify the template.
-1. **Present the plan:** architecture, dependencies, and steps in `docs/plan.md`.
+1. **Present the plan:** goal, architecture, dependencies, and at most five sub-steps in `docs/plan.md`.
 2. **Ask for direction:** *full scaffold* (steps 3–11), *targeted setup* (specific dependencies, build logic, or design system first), or *direct feature work* (a specific feature or domain module).
 3. **Wait for approval**, then invoke `mobile-conventions` and proceed with small atomic commits.
 
@@ -101,15 +101,15 @@ Label interactive elements, set the minimum target size, and check the screen at
 
 ## 9. Add the README and license
 
-Write `README.md` from decisions and the original description: purpose, platforms, prerequisites, configuration, build/run/test commands, layout, and license. Add the chosen `LICENSE`, or an "All rights reserved" notice for proprietary. Treat it as living: step 10 checks it against the architecture; future work updates it with the plan entry. Write it after commands and versions settle.
+Write `README.md` from the original description and the verified commands: purpose, platforms, prerequisites, configuration, build/run/test commands, layout, and license. Do not copy decisions or architecture into it; link instead. Add the chosen `LICENSE`, or an "All rights reserved" notice for proprietary. Treat it as living: step 10 checks it against the architecture; future work updates it in place. Write it after commands and versions settle.
 
 **Check:** a newcomer can build and run from the README alone, and the license matches decisions.
 
 ## 10. Record the decisions and architecture
 
-Update decisions with what the build changed (actual package name, added dependencies, lint config). Write architecture: feature and module tree, seams, dependency direction, libraries and versions, platform split. Create plan with an empty `## Next` and the scaffold under `## Done`. Re-read README and align names, commands, and dependencies. Do this after the build settles; future work reads all four first.
+Keep each doc to one page at scaffold time. Update decisions with the actual package name, added dependencies, and lint config, not a build log. Write architecture as current state: feature and module tree, seams, dependency direction, libraries and versions, platform split; no scaffold chronology or step list. Create plan with `## Next` and one line under `## Done this release` for the scaffold. Re-read README and align names, commands, and dependencies. Do this after the build settles; future work reads all four first.
 
-**Check:** all four files exist, agree, and let a contributor name every choice and dependency from them alone.
+**Check:** all four files exist, each is one page or less, agree, and let a contributor name every choice and dependency from them alone.
 
 ## 11. Add agent instructions
 
@@ -118,14 +118,15 @@ If agreed or asked, write `AGENTS.md` telling the next agent to:
 - read decisions, architecture, plan, and README before changing code;
 - invoke `mobile-conventions` and follow its stack reference;
 - read the language level from the build file and use its current syntax for every added line;
-- start every feature, bug, or refactor with a plan entry;
-- update architecture and README in the same change when shape, dependencies, commands, or behavior change;
+- track a feature or behavior change with a short plan entry when it needs tracking; do not add entries for renames, trivial fixes, or internal refactors;
+- keep architecture, design, and README current; edit in place and prune stale text instead of appending;
+- collapse completed plan entries and delete dropped ones; the plan is a queue, not a history;
 - treat work as incomplete while plan, architecture, README, and decisions disagree;
 - run build, lint, and tests before calling work done.
 
 If the prompt named a tool, add `CLAUDE.md` or `GEMINI.md` as a one-line pointer to `AGENTS.md`. Vanilla: skip unless asked; then point only at decisions and the skill.
 
-**Check:** a fresh agent finds the docs and skill from `AGENTS.md` alone, knows a plan entry comes first, docs move with code, and new code uses the project's language level.
+**Check:** a fresh agent finds the docs and skill from `AGENTS.md` alone, knows the plan is a queue for tracked work, docs are edited in place and pruned, and new code uses the project's language level.
 
 ## Keep the generator's toolchain and dependencies
 

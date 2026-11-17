@@ -46,7 +46,7 @@ Do this before the first code edit, including a small snippet:
 8. **Accessibility is done.** Label interactive elements, give 44–48 dp/pt targets, and survive the largest text size; verify with the platform inspector.
 9. **Test at the seam.** Unit-test logic with fakes, contract-test data against a fake server or database, and keep one or two end-to-end UI flows per feature. Snapshots belong to the design system, not every screen.
 10. **Format and lint are automated.** The formatter owns layout and the linter owns rules, so review attention goes to design. Wire both into build and CI; fix a wrong rule, not the call site.
-11. **Plan first, confirm direction, move docs with code.** Every feature, bug, refactor, or post-scaffold implementation gets a `docs/plan.md` entry; present it and get approval before code; confirm direction after project creation. `docs/architecture.md` and `README.md` move in the same atomic commit as shape, dependencies, commands, or behavior. Docs disagreeing means not done.
+11. **Plan the work; docs are current-state.** A tracked feature or behavior change gets a short `docs/plan.md` entry before code; a rename, dependency bump, internal refactor, or one-line fix gets none. `docs/architecture.md`, any design doc, and `README.md` describe what exists now: edit the affected section in place, never append a step log or change history. Delete what the change made false before adding anything. Docs disagreeing with code means not done.
 12. **Match structure; write added code in the current idiom.** Follow existing structure, architecture, and API choices unless told otherwise. Every line you add uses the newest syntax the language level supports, including sugar; that changes expression, not behavior. Prefer the simplest established approach for logic, error handling, and dependencies, not for syntax. Edited code keeps its surrounding style unless the edit touches the construct; deleted code is not modernized. The language level is the ceiling: never use an older form than necessary, and never propose an upgrade just to use newer syntax. If the current form cannot be used, mark `TODO` and record why. Comment unhandled errors and edge cases (what fails, why); comments state intent, not a transcript, so a reader does not have to simulate the code to find them.
 13. **Edit surgically.** Any edit—code, config, docs—is the smallest precise diff that fixes the cause. Touch only the lines the task owns; do not reformat, reorder, rename, or refactor untouched code, and keep drive-by fixes out of the change. Preserve unrelated behavior, public APIs, and surrounding style. If the correct fix needs a wider diff, say why and confirm first. A reviewer should read the intent from the diff alone.
 14. **Verify in proportion.** Inner loop: compile or analyze only what changed, plus one filtered test, so it costs seconds. Gate: format check, lint, full tests, and build once per batch, not per file. Keep the daemon warm, batch edits, skip the gate for prose. Probe SDK, JDK, and tool versions before build config; never provision an emulator, runtime, or large SDK without asking. If the gate runs more than a handful of times for one change, the loop is too expensive; fix it. Commands: stack reference.
@@ -59,6 +59,7 @@ Do this before the first code edit, including a small snippet:
 21. **Side effects with the caller.** Navigation and sharing are callbacks (`onOpenB: () -> Unit`), not calls the screen makes. The screen stays unaware of feature B, so it can be tested, kept, or replaced alone.
 22. **Interfaces for everything injected.** Feature entry points and constructors take interfaces or function types for repositories, services, data sources, platform and navigation adapters, and features; build the concrete instance once at the edge. A test can pass a fake, and another build can pass a different implementation. A test needing a real database, network, or navigator has a leaked seam.
 23. **Do not over-federate or over-split.** Split only when a separate entity earns its keep: a distinct responsibility, state, lifecycle, or seam. Do not scatter one concern across many classes, files, or modules; every extra hop makes maintenance and data flow harder to follow. The right granularity depends on the context, responsibilities, new state, and new entities—prefer the fewest moving parts that keep the seam clear.
+24. **Documentation is proportional and pruned.** Start every doc update by deleting stale, duplicated, completed, or dropped-work text; an all-additive diff is a log, not documentation. A rename or small fix touches at most about ten doc lines total, a feature about thirty, and a scaffold one page per doc; exceed it only for a real design change and say why. Plan entries are summaries, not transcripts. If the docs grow faster than the code, cut them.
 
 ## Rule conflicts
 
@@ -78,21 +79,23 @@ Keep each file to its job; link instead of copying.
 
 | File | Holds | Update when |
 | --- | --- | --- |
-| `docs/decisions.md` | request, agreed choices, rationale, short architecture summary | a choice changes |
-| `docs/architecture.md` | modules, seams, dependency direction, libraries and versions | the shape changes |
-| `docs/plan.md` | release/goal checklists; one entry per feature or bug with requirements, steps, and status | work is planned, started, or finished |
-| `README.md` | purpose, build/run/test commands, layout | behavior, setup, commands, or structure changes |
+| `docs/decisions.md` | durable choice, reason, rejected alternative; superseded entries compressed | a durable choice changes |
+| `docs/architecture.md` | current modules, seams, dependency direction, libraries and versions; no history | the shape changes |
+| `docs/plan.md` | active and next work only; one short entry per open item; completed collapsed, dropped deleted | work starts, changes state, or is dropped |
+| `README.md` | current purpose, build/run/test commands, layout | behavior, setup, commands, or structure changes |
 
-A feature, bug, or refactor gets a `docs/plan.md` entry before code. Architecture and README move with the code; a change is not done while they disagree. See [`reference/planning.md`](reference/planning.md) for the entry template, sync matrix, and intake questions, including when to propose a smaller approach.
+A `docs/design.md` or per-feature design doc follows architecture: current state, edited in place, no step list or superseded design.
+
+A tracked feature or behavior change gets a short `docs/plan.md` entry before code; a rename, dependency bump, internal refactor, or one-line fix does not. Architecture, design, and README move with the code; a change is not done while they disagree. Start every update by deleting what is now false. See [`reference/planning.md`](reference/planning.md) for the entry template, prune rules, document budget, sync matrix, and intake questions.
 
 `AGENTS.md` is the entry point: it points an agent at these files and this skill, and stays short enough to read first.
 
 ## Applying
 
 1. **Name the stack and language level.** Read the matching reference and the level from the build file. List the syntax that level enables in the plan; at Dart 3.14 that includes primary constructors, dot shorthands, and patterns.
-2. **Record the work.** A feature or bug gets a `docs/plan.md` entry; a choice goes to `docs/decisions.md`. State intent, names, any departure from prompt wording, and the doc updates required. See [`reference/planning.md`](reference/planning.md).
+2. **Record only what needs tracking.** A feature or behavior change gets a short `docs/plan.md` entry; a durable choice goes to `docs/decisions.md`; a rename or internal refactor gets neither. State intent, names, and any departure from prompt wording. See [`reference/planning.md`](reference/planning.md).
 3. **Place the change.** Name its layer and seam, and keep the split to the fewest entities the responsibility needs; if you cannot name the layer, the design is not settled.
 4. **Write in the current idiom.** Use the newest form the level supports for every added line. Re-read the diff before reporting and replace an older form you wrote; do not copy older surrounding syntax into new code.
 5. **Check the seam.** UI importing data, logic importing UI, shared importing platform, or feature importing feature means move the dependency behind an interface.
-6. **Sync the documents.** Update architecture and README in the same change. Done when plan, architecture, README, and decisions agree.
-7. **Verify.** Stack inner loop, then one gate per batch; rule 14 sets the budget. Re-read the diff for older syntax before calling the work done.
+6. **Sync and prune the documents.** Edit architecture, design, and README in place; delete what the change made false. Done when the plan shows only current work and the docs agree with the code.
+7. **Verify.** Stack inner loop, then one gate per batch; rule 14 sets the budget. Re-read the diff for older syntax and for all-additive docs before calling the work done.
