@@ -1,6 +1,6 @@
 ---
 name: mobile-conventions
-description: Conventions for Android, iOS, Flutter, and Kotlin Multiplatform apps, covering consistency, naming, feature boundaries, structure, layering, state, navigation, dependency injection, persistence, errors, lint, testing, verification, accessibility, the project's language level and current syntax, and project documents, including the README. Use when changing, reviewing, or planning work in a mobile codebase.
+description: Conventions for Android, iOS, Flutter, and Kotlin Multiplatform apps, covering consistency, naming, feature boundaries, structure, layering, state, navigation, dependency injection, persistence, errors, lint, testing, verification, accessibility, the project's language level and current syntax, and project documents, including the README, and keeping them pruned. Use when changing, reviewing, or planning work in a mobile codebase.
 ---
 
 # Mobile app conventions
@@ -59,7 +59,7 @@ Do this before the first code edit, including a small snippet:
 21. **Side effects with the caller.** Navigation and sharing are callbacks (`onOpenB: () -> Unit`), not calls the screen makes. The screen stays unaware of feature B, so it can be tested, kept, or replaced alone.
 22. **Interfaces for everything injected.** Feature entry points and constructors take interfaces or function types for repositories, services, data sources, platform and navigation adapters, and features; build the concrete instance once at the edge. A test can pass a fake, and another build can pass a different implementation. A test needing a real database, network, or navigator has a leaked seam.
 23. **Do not over-federate or over-split.** Split only when a separate entity earns its keep: a distinct responsibility, state, lifecycle, or seam. Do not scatter one concern across many classes, files, or modules; every extra hop makes maintenance and data flow harder to follow. The right granularity depends on the context, responsibilities, new state, and new entities—prefer the fewest moving parts that keep the seam clear.
-24. **Documentation is proportional and pruned.** Start every doc update by deleting stale, duplicated, completed, or dropped-work text; an all-additive diff is a log, not documentation. Describe each change once: goal and acceptance in the plan, choice and reason in the decision, shape in architecture, usage in the README. Deleting work deletes its traces instead of adding a removal entry. A rename or small fix touches at most about ten doc lines total, a feature about thirty, and a scaffold one page per doc; exceed it only for a real design change and say why. Plan entries are summaries, not transcripts. If the docs grow faster than the code, cut them.
+24. **Documentation is proportional and pruned.** Start every doc update by deleting stale, duplicated, completed, or dropped-work text; an all-additive diff for removed or replaced work is a log, not documentation. Describe each change once: goal and acceptance in the plan, choice and reason in the decision, shape in architecture, usage in the README. Deleting work deletes its traces instead of adding a removal entry. A rename or small fix touches at most about ten doc lines total, a feature about thirty, and a scaffold one page per doc; exceed it only for a real design change and say why. Plan entries are summaries, not transcripts. If the docs grow faster than the code, cut them.
 
 ## Rule conflicts
 
@@ -80,23 +80,25 @@ Keep each file to its job; link instead of copying.
 | File | Holds | Update when |
 | --- | --- | --- |
 | `docs/decisions.md` | durable choice, reason, rejected alternative; superseded entries compressed | a durable choice changes |
-| `docs/architecture.md` | current modules, seams, dependency direction, libraries and versions; no history | the shape changes |
+| `docs/architecture.md` | current modules, seams, dependency direction, libraries and reasons; no history | the shape changes |
 | `docs/plan.md` | active and next work only; one short entry per open item; completed collapsed, dropped deleted | work starts, changes state, or is dropped |
 | `README.md` | current shipped behavior, build/run/test commands, layout; planned work stays in the plan | behavior, setup, commands, or structure changes |
+
+A small app may stop at the README and plan; add decisions at the first durable choice and architecture when the shape is non-obvious. A scaffold usually has enough choices and shape to fill all four.
 
 A `docs/design.md` or per-feature design doc follows architecture: current state, edited in place, no step list or superseded design.
 
 A tracked feature or behavior change gets a short `docs/plan.md` entry before code; a rename, dependency bump, internal refactor, or one-line fix does not. Architecture, design, and README move with the code; a change is not done while they disagree. Start every update by deleting what is now false. See [`reference/planning.md`](reference/planning.md) for the entry template, prune rules, document budget, sync matrix, and intake questions.
 
-`AGENTS.md` is the entry point: it points an agent at these files and this skill, and stays short enough to read first.
+`AGENTS.md` is the entry point: it points an agent at these files and this skill, and stays short enough to read first. It records the stack, commands, and doc locations, not a copy of these rules.
 
 ## Applying
 
-1. **Reconcile the docs.** If `docs/` or the README is an archive, contradicts the code, or names files, routes, or commands that no longer exist, prune it first: collapse done work, mark or delete superseded decisions, remove removed-work traces, and move unshipped capabilities into the plan. Do not rewrite text that is still true. See [`reference/planning.md`](reference/planning.md).
+1. **Reconcile the docs.** If `docs/`, `AGENTS.md`, or the README is an archive, contradicts the code, or names files, routes, or commands that no longer exist, prune it first: collapse done work, mark or delete superseded decisions, remove removed-work traces, and move unshipped capabilities into the plan. Keep decisions that still govern the code, do not rewrite prose that is still true, and make it one docs-only commit. See [`reference/planning.md`](reference/planning.md).
 2. **Name the stack and language level.** Read the matching reference and the level from the build file. List the syntax that level enables in the plan; at Dart 3.14 that includes primary constructors, dot shorthands, and patterns.
 3. **Record only what needs tracking.** A feature or behavior change gets a short `docs/plan.md` entry; a durable choice goes to `docs/decisions.md`; a rename or internal refactor gets neither. State intent, names, and any departure from prompt wording. See [`reference/planning.md`](reference/planning.md).
 4. **Place the change.** Name its layer and seam, and keep the split to the fewest entities the responsibility needs; if you cannot name the layer, the design is not settled.
 5. **Write in the current idiom.** Use the newest form the level supports for every added line. Re-read the diff before reporting and replace an older form you wrote; do not copy older surrounding syntax into new code.
 6. **Check the seam.** UI importing data, logic importing UI, shared importing platform, or feature importing feature means move the dependency behind an interface.
 7. **Sync and prune the documents.** Edit architecture, design, and README in place; delete what the change made false. Done when the plan shows only current work and the docs agree with the code.
-8. **Verify.** Stack inner loop, then one gate per batch; rule 14 sets the budget. Re-read the diff for older syntax, all-additive docs, and names that do not resolve before calling the work done.
+8. **Verify.** Stack inner loop, then one gate per batch; rule 14 sets the budget. Re-read the diff for older syntax, all-additive docs for removed or replaced work, and names that do not resolve before calling the work done.
