@@ -1,15 +1,23 @@
 # Planning and project documents
 
-Four documents record a project. Each answers a different question; link between them instead of copying. Decisions are the only doc that keeps a chronological trail; architecture, design, plan, and README are current-state.
+A README and a plan are the baseline; each document answers a different question, so link between them instead of copying. Decisions are the only doc that keeps a chronological trail; architecture, design, plan, and README are current-state.
 
 | File | Answers | Holds |
 | --- | --- | --- |
 | `docs/decisions.md` | Why is it like this? | Durable choices, one short entry each: date, status, choice, reason, rejected alternative. |
-| `docs/architecture.md` | How is it built? | Current module and feature tree, seams, dependency direction, libraries and versions, platform split, commands. |
+| `docs/architecture.md` | How is it built? | Current module and feature tree, seams, dependency direction, libraries and reasons, platform split, commands. |
 | `docs/plan.md` | What are we building next? | Only active and next work; one short entry per open item. Completed and dropped work is removed. |
 | `README.md` | How do I use it? | Current purpose, platforms, prerequisites, setup, commands, layout, and license. |
 
+A small app may stop at the README and plan. Add `docs/decisions.md` at the first durable choice and `docs/architecture.md` when there is more than one module, a real seam, or a non-obvious dependency direction. Do not create a document with nothing durable to say; a scaffold usually has enough choices and shape to fill all four.
+
 A `docs/design.md` or per-feature design doc follows the architecture rule: current state, edited in place. Do not create one for a small change.
+
+## Monorepos and packages
+
+- Root docs own the overall shape and cross-package decisions; package READMEs own install, usage, and package-level commands.
+- Package changelogs own release history. A changelog records releases, not decisions or plans, and exists only when the project publishes.
+- Do not repeat the architecture per package or copy the root README into a package.
 
 ## Reconcile before you start
 
@@ -17,16 +25,17 @@ Existing docs are not automatically true. If they are an archive or contradict t
 
 - Collapse `## Done` to one line per item, or delete the list when the release shipped.
 - Mark each replaced decision `superseded` with a one-line pointer, or delete it.
-- Delete plan entries, decisions, architecture sections, and README text for work that no longer exists.
+- Delete plan entries, decisions, architecture sections, and README text for work that no longer exists. Delete only when the code confirms the work is gone; keep a decision while its choice still governs the code, even if the entry is old.
 - Fix every file, class, route, and command the docs name that the tree does not contain.
 - Move unshipped capabilities out of the README and into the plan.
+- Update `AGENTS.md` if it restates an old policy; keep it to stack, commands, and doc locations.
 
-Do not rewrite text that is still true; stop when the docs match the code.
+Do not rewrite prose that is still true or improve its style; stop when the docs match the code. This is an explicit exception to surgical edits: one docs-only commit, split by file if it exceeds about ±300 lines.
 
 ## Prune before adding
 
 - Start every update by deleting what the change made false: removed features, renamed modules, dropped plan items, superseded designs.
-- Edit the affected section in place. Do not append a new section below the old one; a diff that is only additions is a log, not documentation.
+- Edit the affected section in place. Do not append a new section below the old one; replace the old text instead of stacking a new version on top of it.
 - Do not create a new section, table, or doc for a one-line change. Change the existing line; add it once if it is missing.
 - Never duplicate a fact across docs. Each change has one owner: the plan holds the goal and acceptance, the decision holds the choice and reason, architecture holds the shape, the README holds usage. Link to the owner instead of restating it.
 - Deleting work is not an event. Remove its plan item, decision traces, architecture section, and README text; never add a "removed" entry.
@@ -45,9 +54,9 @@ Do not rewrite text that is still true; stop when the docs match the code.
 
 - One page for most apps. Describe the current shape only: feature and module tree, the seam each layer crosses, dependency direction, and where the composition root sits.
 - Cover shape, seams, dependency direction, libraries, and commands. One diagram at most; no release metadata, topics, changelogs, or file-by-file inventory.
-- List libraries with versions and a one-line reason. Delete a library's entry when the dependency is removed.
+- Name each library and why it exists; the build file owns versions. Record a version only when the doc is the only source of truth, such as a minimum OS or a pinned constraint with a reason. Delete a library's entry when the dependency is removed.
 - For KMP and Flutter, show what is shared and what stays native.
-- Record the build, run, lint, and test commands.
+- Link to the README for build, run, and test commands; record only commands specific to the architecture.
 - Every path, type, route, and command named here must exist in the tree.
 - No change history, `## Implementation`, step lists, or per-feature narrative. Rename in place; do not add a note that it was renamed.
 - Update it in the same change that moves the code.
@@ -96,12 +105,13 @@ Docs move with the code. The plan entry is only for work that needs tracking:
 | Feature or work removed | Delete the entry; no done line or removal entry | Delete the section and its paths | Delete the text | Delete the entry if it exists |
 | Bug fixed | Only if it needs reproduction and acceptance, or spans commits | Only if the fix moves a seam or dependency | Only if behavior, setup, or commands change | Only if it changes a durable choice |
 | Rename or internal refactor | None | Rename in place and delete the old name | Update the name where it appears | None |
-| Dependency added or removed | Only if it is feature work | Update the version and one-line reason | Update prerequisites and setup | Only if the choice is not obvious |
-| Command or tooling change | Only if it is feature work | Update the command | Update the command | Only if the choice is not obvious |
+| Dependency added or removed | Only if it is feature work | Update the one-line reason; versions stay in the build file | Update prerequisites and setup | Only if the choice is not obvious |
+| Command or tooling change | Only if it is feature work | Link to the README command or update an architecture-specific one | Update the command | Only if the choice is not obvious |
 
-- **Delete first:** every doc update removes or rewrites the affected lines. An all-additive doc diff is a defect.
+- **Delete first:** every doc update removes or rewrites the affected lines. An all-additive diff is a defect when the change removed, renamed, replaced, or completed work; a new feature adds lines but must not restate an existing fact.
 - **Budget:** a rename or small fix touches at most about ten doc lines total; a feature at most about thirty; a scaffold one page per doc. Exceed it only for a real design change and say why.
 - **Check the weight:** `git diff --stat -- README.md docs/` should be proportional to the code diff. If the docs grew faster, cut them.
+- **Check the total:** if `README.md` plus `docs/` exceeds roughly a third of the source size, or has grown across several changes without a deletion, treat it as an archive. It is a signal to inspect, not a hard cap; a tiny project legitimately carries proportionally more docs.
 - **Definition of done:** the plan contains only current work and at most five one-line done items; architecture, design, and README match the code; decisions record the durable choices; no document contradicts another; every path, type, route, and command named in a doc exists; no document describes removed work.
 - **Prose-only changes need no code gate.** Check them against the code and links.
 - **Stale docs are a bug.** Fix them in the same change or open a task before doing anything else.

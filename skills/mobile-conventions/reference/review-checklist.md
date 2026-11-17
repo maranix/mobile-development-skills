@@ -65,15 +65,17 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 
 - [ ] Any plan shown to the user was approved before code; direction was confirmed after project creation.
 - [ ] The plan followed the request's intent, not its literal wording.
-- [ ] Existing docs were reconciled before new work if they were an archive, contradicted the code, or named things that no longer exist.
+- [ ] Existing docs were reconciled before new work if they were an archive, contradicted the code, or named things that no longer exist; decisions that still govern the code were kept.
 - [ ] A tracked feature or behavior change has a short plan entry; a rename, dependency bump, internal refactor, or trivial fix added none.
 - [ ] Plan entries are at most ten lines with no file list, commit message, per-step log, or test counts; `## Done this release` has at most five one-liners, and nothing is checked under `## Next`.
 - [ ] Architecture and any design doc describe only the current state: no step list, change history, file inventory, or superseded design.
 - [ ] A removal or rename deleted its doc traces instead of adding a removal entry.
 - [ ] No two decisions conflict without the older one marked `superseded`.
+- [ ] The doc set is tiered and proportional: a small app may stop at README and plan, no doc exists without durable content, and the set does not exceed roughly a third of the source size without a stated reason.
 - [ ] Every file, class, route, and command named in architecture or the README exists in the tree.
 - [ ] `README.md` describes shipped behavior and how to build, run, and test it; planned capabilities are only in the plan.
-- [ ] Every doc update deleted or rewrote the text it made false; the diff is not all additions.
+- [ ] `AGENTS.md` gives only the stack, commands, and doc locations; the README owns commands and the build file owns versions, without duplication.
+- [ ] Every doc update deleted or rewrote the text it made false; a diff for removed, renamed, replaced, or completed work is not all additions.
 - [ ] The doc diff is proportional: a rename or small fix is about ten lines, a feature about thirty, and a scaffold one page per doc.
 - [ ] No document describes a feature, command, or plan item that no longer exists.
 

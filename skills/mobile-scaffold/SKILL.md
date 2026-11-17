@@ -107,26 +107,23 @@ Write `README.md` from the original description and the verified commands: purpo
 
 ## 10. Record the decisions and architecture
 
-Keep each doc to one page at scaffold time. Update decisions with the actual package name, added dependencies, and lint config, not a build log. Write architecture as current state: feature and module tree, seams, dependency direction, libraries and versions, platform split; no scaffold chronology, step list, or file inventory, and every path or command it names must exist. Create plan with `## Next` and one line under `## Done this release` for the scaffold. Re-read README and align names, commands, and dependencies. Do this after the build settles; future work reads all four first.
+Keep each doc to one page at scaffold time; if a document would say nothing durable, skip it and say why. Update decisions with the actual package name, added dependencies, and lint config, not a build log. Write architecture as current state: feature and module tree, seams, dependency direction, libraries and reasons, platform split; no scaffold chronology, step list, or file inventory; name only paths that exist and link to the README for commands. Create plan with `## Next` and one line under `## Done this release` for the scaffold. Re-read README and align names, commands, and dependencies. Do this after the build settles; future work reads the existing docs first.
 
-**Check:** all four files exist, each is one page or less, agree, and let a contributor name every choice and dependency from them alone.
+**Check:** the README and plan exist, every doc that exists is one page or less and agrees, and a contributor can name every choice and dependency from them alone.
 
 ## 11. Add agent instructions
 
-If agreed or asked, write `AGENTS.md` telling the next agent to:
+If agreed or asked, write a short `AGENTS.md` with only what the skill cannot know:
 
-- read decisions, architecture, plan, and README before changing code;
-- invoke `mobile-conventions` and follow its stack reference;
-- read the language level from the build file and use its current syntax for every added line;
-- track a feature or behavior change with a short plan entry when it needs tracking; do not add entries for renames, trivial fixes, or internal refactors;
-- reconcile archive-like or stale docs before adding work; then keep architecture, design, and README current, edit in place, prune removed-work traces instead of appending, and confirm every named path and command exists;
-- collapse completed plan entries and delete dropped ones; the plan is a queue, not a history;
-- treat work as incomplete while plan, architecture, README, and decisions disagree;
-- run build, lint, and tests before calling work done.
+- the stack and language level, read from the build file;
+- the build, lint, and test commands;
+- where the docs live, and the instruction to invoke `mobile-conventions` before changing code.
+
+Do not restate the conventions, plan workflow, or documentation policy; the copy drifts, and a stale `AGENTS.md` misleads the next agent first.
 
 If the prompt named a tool, add `CLAUDE.md` or `GEMINI.md` as a one-line pointer to `AGENTS.md`. Vanilla: skip unless asked; then point only at decisions and the skill.
 
-**Check:** a fresh agent finds the docs and skill from `AGENTS.md` alone, knows the plan is a queue for tracked work, reconciles and prunes docs instead of appending, and new code uses the project's language level.
+**Check:** a fresh agent finds the stack, commands, docs, and skill pointer from `AGENTS.md` alone; it does not restate policy the skill owns.
 
 ## Keep the generator's toolchain and dependencies
 
