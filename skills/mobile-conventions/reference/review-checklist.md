@@ -65,12 +65,16 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 
 - [ ] Any plan shown to the user was approved before code; direction was confirmed after project creation.
 - [ ] The plan followed the request's intent, not its literal wording.
+- [ ] Existing docs were reconciled before new work if they were an archive, contradicted the code, or named things that no longer exist.
 - [ ] A tracked feature or behavior change has a short plan entry; a rename, dependency bump, internal refactor, or trivial fix added none.
-- [ ] Plan entries are at most about twelve lines with no file list, commit message, or per-step log; completed entries are one line and dropped entries are deleted.
-- [ ] Architecture and any design doc describe only the current state: no step list, change history, or superseded design.
+- [ ] Plan entries are at most ten lines with no file list, commit message, per-step log, or test counts; `## Done this release` has at most five one-liners, and nothing is checked under `## Next`.
+- [ ] Architecture and any design doc describe only the current state: no step list, change history, file inventory, or superseded design.
+- [ ] A removal or rename deleted its doc traces instead of adding a removal entry.
+- [ ] No two decisions conflict without the older one marked `superseded`.
+- [ ] Every file, class, route, and command named in architecture or the README exists in the tree.
+- [ ] `README.md` describes shipped behavior and how to build, run, and test it; planned capabilities are only in the plan.
 - [ ] Every doc update deleted or rewrote the text it made false; the diff is not all additions.
 - [ ] The doc diff is proportional: a rename or small fix is about ten lines, a feature about thirty, and a scaffold one page per doc.
-- [ ] `README.md` matches what the app does and how to build, run, and test it.
 - [ ] No document describes a feature, command, or plan item that no longer exists.
 
 ## Language level
