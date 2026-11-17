@@ -2,6 +2,10 @@
 
 Shared Kotlin with either Compose Multiplatform or native UI. Pair with the universal rules in [`../SKILL.md`](../SKILL.md).
 
+## Language level
+
+Read the Kotlin `languageVersion` and toolchain from the shared build; `commonMain` uses the same level as every target. Use the current Kotlin idiom it supports, not the older Java-shaped form. An official language skill, when present, is authoritative for syntax.
+
 ## Structure
 
 ```

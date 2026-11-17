@@ -2,6 +2,10 @@
 
 Kotlin, Compose, and AndroidX. Pair with the universal rules in [`../SKILL.md`](../SKILL.md).
 
+## Language level
+
+Read the Kotlin `languageVersion` and toolchain from Gradle before the first edit, and keep the generated level. Use the current Kotlin idiom it supports (sealed interfaces, data objects, value classes, exhaustive `when`) rather than the older Java-shaped form. An official language skill, when present, is authoritative for syntax.
+
 ## Structure
 
 Feature-first, with layers inside each feature:

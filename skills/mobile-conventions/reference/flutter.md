@@ -2,6 +2,67 @@
 
 Dart, Flutter, and one state-management choice per project. Pair with the universal rules in [`../SKILL.md`](../SKILL.md).
 
+## Language level
+
+The package language version is the lower bound of `environment.sdk` in `pubspec.yaml`; read it before the first Dart edit. `^3.14.0` enables every form below. Use the newest form the bound allows; at 3.13+, a simple class that repeats its fields in a constructor is a defect.
+
+| Form | Min | Use for |
+| --- | --- | --- |
+| Records, patterns, switch expressions, class modifiers | 3.0 | Outcomes, destructuring, exhaustive UI states |
+| Extension types | 3.3 | Zero-cost domain wrappers |
+| Digit separators | 3.6 | Large literals |
+| Wildcard variables | 3.7 | Unused parameters and destructuring |
+| Null-aware elements | 3.8 | Optional list, map, and set entries |
+| Dot shorthands | 3.10 | Enum values, static members, constructors where the context type is known |
+| Primary constructors; concise `new`/`factory` constructors | 3.13 | Fields and the main constructor in one declaration |
+
+```dart
+// Do not add this form for a simple value class at 3.13+.
+class User {
+  final String name;
+  final int age;
+  User(this.name, this.age);
+}
+```
+
+```dart
+// Add this form.
+class User(final String name, final int age);
+
+class const TripCard({
+  super.key,
+  required final Trip trip,
+  final VoidCallback? onTap,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+      ListTile(title: Text(trip.name), onTap: onTap);
+}
+```
+
+- Use a primary constructor for values, models, widgets, and states whose fields come straight from the constructor. Keep a traditional constructor only for a second non-redirecting generative constructor, a body the primary form cannot express, or a super call that cannot be written as a super parameter.
+- Use `new name()` and `factory name()` for in-body constructors at 3.13+.
+- Use dot shorthands where the context type is known: `.center`, `.min`, `.idle`, `.fromJson()`. Do not repeat the type at the call site.
+- Model exclusive states with a sealed class and a `switch` expression; destructure with object or record patterns instead of `is` plus a cast.
+
+```dart
+Widget toolbar(List<Widget> children) => Column(
+  mainAxisAlignment: .center,
+  mainAxisSize: .min,
+  children: children,
+);
+
+Widget body(HomeState state) => switch (state) {
+  Loading() => const CircularProgressIndicator(),
+  Loaded(:final items) => ItemList(items),
+  Failed(:final error) => ErrorView(error),
+};
+```
+
+A form above the constraint is unavailable. Do not enable an experiment to reach one; record the version gap instead. `dart migrate` (3.14+) upgrades a project; run it only when the plan includes the upgrade.
+
+Before returning a Dart diff, scan it: collapse any new simple field-plus-constructor class to a primary constructor, replace repeated enum, static, or constructor type names with dot shorthands, and replace `is` plus a cast with a pattern. Apply this to new code only; leave untouched code alone.
+
 ## Structure
 
 Feature-first, with layers inside the feature:
@@ -24,6 +85,7 @@ lib/
 
 ## UI
 
+- Import Material from the package the generator uses. Recent Flutter generates `package:material_ui/material_ui.dart`; `package:flutter/material.dart` is deprecated since 3.47. Keep the `material_ui` dependency the generator adds.
 - The screen widget is the only stateful layer; leaf widgets take plain data and callbacks and can be `const`.
 - Use `LayoutBuilder` for layout decisions and `MediaQuery` for device facts (text scale, insets). Choosing a layout from `MediaQuery.size` ignores the constraints of the widget you are building, which matters as soon as a pane is narrower than the window.
 - Give list items keys when the list can reorder, or state follows the wrong row.

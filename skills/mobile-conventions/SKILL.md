@@ -1,6 +1,6 @@
 ---
 name: mobile-conventions
-description: Conventions for Android, iOS, Flutter, and Kotlin Multiplatform apps, covering consistency, naming, feature boundaries, structure, layering, state, navigation, dependency injection, persistence, errors, lint, testing, verification, accessibility, and project documents, including the README. Use when changing, reviewing, or planning work in a mobile codebase.
+description: Conventions for Android, iOS, Flutter, and Kotlin Multiplatform apps, covering consistency, naming, feature boundaries, structure, layering, state, navigation, dependency injection, persistence, errors, lint, testing, verification, accessibility, the project's language level and current syntax, and project documents, including the README. Use when changing, reviewing, or planning work in a mobile codebase.
 ---
 
 # Mobile app conventions
@@ -8,6 +8,8 @@ description: Conventions for Android, iOS, Flutter, and Kotlin Multiplatform app
 Four stacks, one spine: Android (Kotlin + Compose), iOS (Swift + SwiftUI), Flutter (Dart), and Kotlin Multiplatform (shared Kotlin, platform UI). Each stack reference supplies the idiom for these shared rules.
 
 The **seam** is the organising idea: every UI/logic/data/platform boundary must be a cut you can substitute. Keep seams narrow and test at them. Most mobile design bugs are a missing seam (UI reaching into the database) or a leaky one (a DTO in a composable).
+
+Apply these rules directly; do not restate them in the response. Read only the matching stack reference and the checklist or planning file the task needs; the other stacks are noise.
 
 ## Identify the stack
 
@@ -24,9 +26,13 @@ KMP has a platform UI too: read the KMP reference, then the Android or iOS refer
 
 Reviewing rather than building? Walk [`reference/review-checklist.md`](reference/review-checklist.md) after the stack reference.
 
-## Language and framework skills
+## Preflight
 
-Before writing code, check the available skills for the detected language, SDK, or framework and load the relevant one; use it as the source of truth for current syntax and idioms. Do this without being asked. This skill owns architecture and process, not a versioned feature list. If no skill exists, consult the official docs for the project's language version.
+Do this before the first code edit, including a small snippet:
+
+1. **Read the language level from the build file.** `environment.sdk` in `pubspec.yaml` (Dart), `jvmToolchain` and `languageVersion` in Gradle (Kotlin), `swift-tools-version` or `SWIFT_VERSION` (Swift). The declared level is the ceiling; the installed toolchain can be newer. Record it in the plan or review notes.
+2. **Use the newest form that level enables for every added line.** An older form is a defect, not a style preference; a simple Dart class that repeats its fields in a constructor at 3.13+ is the canonical example. For Dart: primary and concise constructors at 3.13+, dot shorthands at 3.10+, and patterns, records, sealed classes, and switch expressions at 3.0+; the Flutter reference carries the table and examples. For Kotlin and Swift, the official language skill or the versioned docs are authoritative.
+3. **Never depend on a language skill being present.** If an official language or framework skill exists, load it and treat it as authoritative for syntax. If not, use the stack reference, and for a form it does not name, consult the official docs for that language version. Never fall back to the surrounding code's older syntax.
 
 ## Universal rules
 
@@ -41,7 +47,7 @@ Before writing code, check the available skills for the detected language, SDK, 
 9. **Test at the seam.** Unit-test logic with fakes, contract-test data against a fake server or database, and keep one or two end-to-end UI flows per feature. Snapshots belong to the design system, not every screen.
 10. **Format and lint are automated.** The formatter owns layout and the linter owns rules, so review attention goes to design. Wire both into build and CI; fix a wrong rule, not the call site.
 11. **Plan first, confirm direction, move docs with code.** Every feature, bug, refactor, or post-scaffold implementation gets a `docs/plan.md` entry; present it and get approval before code; confirm direction after project creation. `docs/architecture.md` and `README.md` move in the same atomic commit as shape, dependencies, commands, or behavior. Docs disagreeing means not done.
-12. **Match structure; write added code in the current idiom.** Follow existing structure, architecture, and API choices unless told otherwise. For every line you add, use the newest syntax the project's language version supports, including syntactic sugar; newer syntax is not a "new API" tradeoff because it changes expression, not behavior. Prefer the simplest established approach for logic, error handling, and dependencies, not for syntax. This covers all added code, not only copied snippets; do this without being asked. Edited code keeps its surrounding style unless the edit already touches the construct; deleted code is not modernized. Check the language/SDK version and use any official language or framework skill available; it is authoritative for the current form. The project's language version is the ceiling: use the newest syntax it supports, never an older form than necessary, and do not propose an upgrade just to use newer syntax. If the current form cannot be used, mark `TODO` or record why. Comment unhandled errors and edge cases (what fails, why); comments state intent, not a transcript. A reader should not have to simulate the code to find them.
+12. **Match structure; write added code in the current idiom.** Follow existing structure, architecture, and API choices unless told otherwise. Every line you add uses the newest syntax the language level supports, including sugar; that changes expression, not behavior. Prefer the simplest established approach for logic, error handling, and dependencies, not for syntax. Edited code keeps its surrounding style unless the edit touches the construct; deleted code is not modernized. The language level is the ceiling: never use an older form than necessary, and never propose an upgrade just to use newer syntax. If the current form cannot be used, mark `TODO` and record why. Comment unhandled errors and edge cases (what fails, why); comments state intent, not a transcript, so a reader does not have to simulate the code to find them.
 13. **Edit surgically.** Any edit—code, config, docs—is the smallest precise diff that fixes the cause. Touch only the lines the task owns; do not reformat, reorder, rename, or refactor untouched code, and keep drive-by fixes out of the change. Preserve unrelated behavior, public APIs, and surrounding style. If the correct fix needs a wider diff, say why and confirm first. A reviewer should read the intent from the diff alone.
 14. **Verify in proportion.** Inner loop: compile or analyze only what changed, plus one filtered test, so it costs seconds. Gate: format check, lint, full tests, and build once per batch, not per file. Keep the daemon warm, batch edits, skip the gate for prose. Probe SDK, JDK, and tool versions before build config; never provision an emulator, runtime, or large SDK without asking. If the gate runs more than a handful of times for one change, the loop is too expensive; fix it. Commands: stack reference.
 15. **Keep the generator's toolchain and dependencies.** Keep the provisioned SDK, platform target, compiler, build tool, and dependency versions across all variants; never downgrade for a tool, linter, or library. Surface a conflict as a decision (tool/package, required versions, provisions replaced); the user chooses upgrade/replace, omit, or accept downgrade. Never silently pin older versions or suppress to hide skew. A silent downgrade forks the project from its generator. Record it in `docs/decisions.md`; repeat unresolved conflicts in the result.
@@ -83,10 +89,10 @@ A feature, bug, or refactor gets a `docs/plan.md` entry before code. Architectur
 
 ## Applying
 
-1. **Name the stack.** Read the matching reference above.
+1. **Name the stack and language level.** Read the matching reference and the level from the build file. List the syntax that level enables in the plan; at Dart 3.14 that includes primary constructors, dot shorthands, and patterns.
 2. **Record the work.** A feature or bug gets a `docs/plan.md` entry; a choice goes to `docs/decisions.md`. State intent, names, any departure from prompt wording, and the doc updates required. See [`reference/planning.md`](reference/planning.md).
 3. **Place the change.** Name its layer and seam, and keep the split to the fewest entities the responsibility needs; if you cannot name the layer, the design is not settled.
-4. **Write in the current idiom.** Check the language/SDK version and use any official stack skill; use the newest syntax that version supports for every line you add. Do not copy older surrounding syntax into new code.
+4. **Write in the current idiom.** Use the newest form the level supports for every added line. Re-read the diff before reporting and replace an older form you wrote; do not copy older surrounding syntax into new code.
 5. **Check the seam.** UI importing data, logic importing UI, shared importing platform, or feature importing feature means move the dependency behind an interface.
 6. **Sync the documents.** Update architecture and README in the same change. Done when plan, architecture, README, and decisions agree.
-7. **Verify.** Stack inner loop, then one gate per batch; rule 14 sets the budget.
+7. **Verify.** Stack inner loop, then one gate per batch; rule 14 sets the budget. Re-read the diff for older syntax before calling the work done.
