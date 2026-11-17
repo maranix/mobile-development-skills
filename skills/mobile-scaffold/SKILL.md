@@ -101,13 +101,13 @@ Label interactive elements, set the minimum target size, and check the screen at
 
 ## 9. Add the README and license
 
-Write `README.md` from the original description and the verified commands: purpose, platforms, prerequisites, configuration, build/run/test commands, layout, and license. Do not copy decisions or architecture into it; link instead. Add the chosen `LICENSE`, or an "All rights reserved" notice for proprietary. Treat it as living: step 10 checks it against the architecture; future work updates it in place. Write it after commands and versions settle.
+Write `README.md` from the original description and the verified commands: purpose, platforms, prerequisites, configuration, build/run/test commands, layout, and license. Describe only what the scaffold ships; future capabilities belong in the plan. Do not copy decisions or architecture into it; link instead. Add the chosen `LICENSE`, or an "All rights reserved" notice for proprietary. Treat it as living: step 10 checks it against the architecture; future work updates it in place. Write it after commands and versions settle.
 
 **Check:** a newcomer can build and run from the README alone, and the license matches decisions.
 
 ## 10. Record the decisions and architecture
 
-Keep each doc to one page at scaffold time. Update decisions with the actual package name, added dependencies, and lint config, not a build log. Write architecture as current state: feature and module tree, seams, dependency direction, libraries and versions, platform split; no scaffold chronology or step list. Create plan with `## Next` and one line under `## Done this release` for the scaffold. Re-read README and align names, commands, and dependencies. Do this after the build settles; future work reads all four first.
+Keep each doc to one page at scaffold time. Update decisions with the actual package name, added dependencies, and lint config, not a build log. Write architecture as current state: feature and module tree, seams, dependency direction, libraries and versions, platform split; no scaffold chronology, step list, or file inventory, and every path or command it names must exist. Create plan with `## Next` and one line under `## Done this release` for the scaffold. Re-read README and align names, commands, and dependencies. Do this after the build settles; future work reads all four first.
 
 **Check:** all four files exist, each is one page or less, agree, and let a contributor name every choice and dependency from them alone.
 
@@ -119,14 +119,14 @@ If agreed or asked, write `AGENTS.md` telling the next agent to:
 - invoke `mobile-conventions` and follow its stack reference;
 - read the language level from the build file and use its current syntax for every added line;
 - track a feature or behavior change with a short plan entry when it needs tracking; do not add entries for renames, trivial fixes, or internal refactors;
-- keep architecture, design, and README current; edit in place and prune stale text instead of appending;
+- reconcile archive-like or stale docs before adding work; then keep architecture, design, and README current, edit in place, prune removed-work traces instead of appending, and confirm every named path and command exists;
 - collapse completed plan entries and delete dropped ones; the plan is a queue, not a history;
 - treat work as incomplete while plan, architecture, README, and decisions disagree;
 - run build, lint, and tests before calling work done.
 
 If the prompt named a tool, add `CLAUDE.md` or `GEMINI.md` as a one-line pointer to `AGENTS.md`. Vanilla: skip unless asked; then point only at decisions and the skill.
 
-**Check:** a fresh agent finds the docs and skill from `AGENTS.md` alone, knows the plan is a queue for tracked work, docs are edited in place and pruned, and new code uses the project's language level.
+**Check:** a fresh agent finds the docs and skill from `AGENTS.md` alone, knows the plan is a queue for tracked work, reconciles and prunes docs instead of appending, and new code uses the project's language level.
 
 ## Keep the generator's toolchain and dependencies
 
