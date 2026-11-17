@@ -2,6 +2,10 @@
 
 Swift, SwiftUI, and the Observation framework. Pair with the universal rules in [`../SKILL.md`](../SKILL.md).
 
+## Language level
+
+Read `SWIFT_VERSION` and the deployment target before the first edit. The target gates APIs as well as syntax, so use the current Swift idiom the version supports (macros, `if` and `switch` expressions, `@Observable`, typed throws) without adopting an API above the target. An official language skill, when present, is authoritative for syntax.
+
 ## Structure
 
 Feature folders, each with its own layers:

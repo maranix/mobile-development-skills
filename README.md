@@ -23,8 +23,8 @@ Both skills work with any agent that supports the [Agent Skills](https://agentsk
 
 ## Why these skills
 
-- **Consistency for structure, current idiom for added code.** New code follows the source's structure, architecture, and API choices; names are chosen for their role in context, not copied from the prompt. Edits stay surgical, touching only the lines the change owns. Every added line uses the newest syntax the project's language version supports. The skill loads any official language or framework skill as the authority on current syntax, and never proposes an upgrade just to use newer syntax. Unhandled failures are named in a brief comment instead of being left for the reader to discover.
-- **One spine, four stacks.** The same rules apply everywhere; each stack reference supplies the architecture idiom, recommended libraries, and platform gotchas, while official language or framework skills supply current syntax.
+- **Consistency for structure, current idiom for added code.** New code follows the source's structure, architecture, and API choices; names are chosen for their role in context, not copied from the prompt. Edits stay surgical, touching only the lines the change owns. Every added line uses the newest syntax the project's language version supports. The skill reads that level from the build file and names the forms it enables (Dart primary constructors at 3.13+, dot shorthands at 3.10+, patterns at 3.0+); an older form is a defect. It loads any official language or framework skill as the authority on current syntax, falls back to the stack reference when none exists, and never proposes an upgrade just to use newer syntax. Unhandled failures are named in a brief comment instead of being left for the reader to discover.
+- **One spine, four stacks.** The same rules apply everywhere; each stack reference supplies the architecture idiom, recommended libraries, and platform gotchas, and names its language level. The Flutter reference also maps Dart versions to the syntax they enable, while official language or framework skills add current syntax detail when available.
 - **Seams over folder conventions.** Every boundary between UI, logic, data, and platform code is a cut you can substitute. The skills keep those seams narrow and testable instead of enforcing a directory shape.
 - **Name by role, split by responsibility.** Classes, interfaces, variables, constants, and modules take the domain term that fits their context and purpose; prompt or reference names are only a starting point. Split only when a distinct responsibility, state, lifecycle, or seam earns it, so maintenance and data flow stay easy to follow.
 - **Official generators first.** New projects start from the stack's recommended CLI or canonical wizard, never a hand-built tree, so the result keeps upstream structure and fixes.
@@ -127,7 +127,7 @@ mobile-scaffold: Scaffold a Flutter app for tracking expenses.
 
 Agents with slash commands take the name as a command; agents without one take the name at the start of the request.
 
-The conventions skill selects the stack reference from the build files, reads it, loads any official language or framework skill, and applies the rules. The scaffold skill runs its discovery step first, then generates and layers the project. Neither skill is a runtime dependency: they are instructions the agent follows in the conversation.
+The conventions skill selects the stack reference from the build files, reads the language level, loads any official language or framework skill, and applies the rules; the Flutter reference carries the Dart version-to-syntax table when no language skill exists. The scaffold skill runs its discovery step first, then generates and layers the project. Neither skill is a runtime dependency: they are instructions the agent follows in the conversation.
 
 ## Supported agents
 

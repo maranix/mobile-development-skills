@@ -70,13 +70,18 @@ Walk every item. A "no" is a finding, not a style preference. Read the stack ref
 - [ ] `README.md` matches what the app does and how to build, run, and test it.
 - [ ] No document describes a feature or command that no longer exists.
 
+## Language level
+
+- [ ] The build file's language level was read before the first edit and recorded in the plan or review notes.
+- [ ] Every added line uses the newest form that level supports; no older form was copied from surrounding code.
+- [ ] Dart at 3.13+ uses primary constructors for simple state-bearing classes and `new`/`factory` for in-body constructors; 3.10+ uses dot shorthands where the context type is known; 3.0+ uses patterns, records, sealed classes, and switch expressions instead of `is` plus casts.
+- [ ] No form above the language level is used, and no experiment was enabled to reach one.
+
 ## Consistency
 
 - [ ] The diff touches only the files and lines the change owns; no unrelated reformatting, reordering, renames, or refactors.
 - [ ] New code follows the source's structure, architecture, and API choices.
-- [ ] Added code uses the newest syntax the project's language version supports; it does not copy an older form from surrounding code or a snippet.
 - [ ] Edited code keeps its surrounding style unless the edit already touches the construct; deleted code was not modernized.
-- [ ] The language/SDK version was checked and any official language or framework skill was consulted.
 - [ ] Every class, interface, variable, constant, feature, and module is named for its role in this codebase; prompt or reference names were used only where they fit context and purpose.
 - [ ] Names and flows that depart from the request's wording are explained in the plan or the result.
 - [ ] Added code that could not use the current syntax has a `TODO` or a documented reason, plus a probable replacement.

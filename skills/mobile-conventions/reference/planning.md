@@ -39,6 +39,7 @@ Each entry:
 - **Goal:** Sync completed workouts when the device is online.
 - **Requirements:** what it must do, what must not change, and any constraint.
 - **Approach:** the change, in a sentence or two.
+- **Language level:** the build file's level and the forms it enables, or `unchanged`.
 - **Alternatives:** what else was considered and why it was rejected.
 - **Sub-steps:**
   - [ ] ...

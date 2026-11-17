@@ -37,7 +37,7 @@ The prompt is the brief. Extract what it states, infer the rest, ask only what r
 
 Lint levels: **standard** (the stack's formatter and linter per its reference, warnings failing CI), **strict** (`very_good_analysis`, SwiftLint `--strict`, a larger detekt config), or **none** (skip step 5). Android and Xcode templates ship without a lint config; Flutter ships `analysis_options.yaml` with `flutter_lints`; KMP templates usually ship none.
 
-**Record** `docs/decisions.md` before generating: the request in one paragraph, scope, and agreed choices—stack, UI strategy, build, name, IDs, organization, platforms, minimum OS, state, navigation, DI, persistence, lint, license, agent instructions, and the README outline. Add a one-paragraph architecture sketch linking to `docs/architecture.md`, which step 10 fills in.
+**Record** `docs/decisions.md` before generating: the request in one paragraph, scope, and agreed choices—stack, UI strategy, build, name, IDs, organization, platforms, minimum OS, language level, state, navigation, DI, persistence, lint, license, agent instructions, and the README outline. Add a one-paragraph architecture sketch linking to `docs/architecture.md`, which step 10 fills in.
 
 Example: "Create a new app for workout tracking which works offline and uses camera and object detection to recognize my workouts automatically" fixes purpose and features; remaining gaps are stack, name and ID, organization, platforms, and license. Offline means local persistence; camera and inference mean the camera permission and an on-device model; state, navigation, and DI take defaults.
 
@@ -49,12 +49,12 @@ Use the official generator, kept current (`flutter upgrade`, `kotlin update`, cu
 
 - **Android:** prefer `android create empty-activity --name="My App" --application-id=com.example.myapp --output=./my-app`. Check that `android create` exists first; if missing, recommend installing it (it covers creation, devices, screenshots, and SDK management) and ask before installing per https://developer.android.com/tools/android-cli. Only if declined, fall back to Android Studio > New Project. `gradle init` does not create an Android app.
 - **iOS:** Xcode > File > New > Project > App. If the agent cannot drive the GUI, ask the user to run the wizard, then take over. No third-party generator unless asked.
-- **Flutter:** `flutter create --empty --org com.example --platforms=android,ios my_app`.
+- **Flutter:** `flutter create --empty --org com.example --platforms=android,ios my_app`. Record `environment.sdk` from the generated `pubspec.yaml`; it sets the Dart syntax floor for every file you add.
 - **KMP:** `kotlin init` (install with `curl -fsSL https://kotl.in/install.sh | sh`). If unavailable, recommend the Kotlin Toolchain and ask before installing; if declined, use the Gradle path via `kmp.jetbrains.com` or IDE > New Project > Kotlin Multiplatform. The Toolchain is pre-1.0; choose Gradle when the project must stay on the standard build.
 
 Generate the smallest app the tool offers. Keep the versions the generator chose (see [Keep the generator's toolchain](#keep-the-generators-toolchain-and-dependencies)).
 
-**Check:** the empty app builds on the generator's toolchain and dependencies (JDK, Gradle, Xcode, SDK, Flutter, Dart, packages) and launches if a device or simulator is already attached. Never provision one without asking.
+**Check:** the empty app builds on the generator's toolchain and dependencies (JDK, Gradle, Xcode, SDK, Flutter, Dart, packages) and the language level is recorded. It launches if a device or simulator is already attached; never provision one without asking.
 
 **Commit the template:** commit the freshly generated template intact as its own commit (no split) to establish the clean upstream baseline.
 
@@ -117,6 +117,7 @@ If agreed or asked, write `AGENTS.md` telling the next agent to:
 
 - read decisions, architecture, plan, and README before changing code;
 - invoke `mobile-conventions` and follow its stack reference;
+- read the language level from the build file and use its current syntax for every added line;
 - start every feature, bug, or refactor with a plan entry;
 - update architecture and README in the same change when shape, dependencies, commands, or behavior change;
 - treat work as incomplete while plan, architecture, README, and decisions disagree;
@@ -124,11 +125,12 @@ If agreed or asked, write `AGENTS.md` telling the next agent to:
 
 If the prompt named a tool, add `CLAUDE.md` or `GEMINI.md` as a one-line pointer to `AGENTS.md`. Vanilla: skip unless asked; then point only at decisions and the skill.
 
-**Check:** a fresh agent finds the docs and skill from `AGENTS.md` alone and knows a plan entry comes first and docs move with code.
+**Check:** a fresh agent finds the docs and skill from `AGENTS.md` alone, knows a plan entry comes first, docs move with code, and new code uses the project's language level.
 
 ## Keep the generator's toolchain and dependencies
 
 - Treat the generator's toolchain, compiler, SDK, deployment targets, and dependencies across all variants (Android, iOS, Flutter, KMP) as the baseline; a generated project that builds is the reference. Do not replace or downgrade versions for a secondary tool, linter, formatter, or library.
+- The generated `environment.sdk`, Kotlin `languageVersion`, and Swift version set the language level. Keep them; never lower a constraint to make older syntax valid.
 - If a tool cannot support them, stop and report a decision: name the package or tool, the versions it demands, what was provisioned, and the three options (upgrade/replace, omit, accept downgrade). Ask before choosing.
 - Never silently pin an older runtime, SDK, compiler, or dependency, and never add a suppression whose only job is to hide version skew. Record dropped packages or accepted downgrades in decisions.
 - Repeat unresolved conflicts in the final result.
@@ -151,4 +153,5 @@ Done when the scaffold needed one cold build, a few inner-loop checks, and one f
 
 - One navigation example, not a feature.
 - Recommend the platform's built-in option first; a package earns its place when the first feature needs it.
+- Write every new file at the recorded language level; leave generated template files as the generator wrote them. At Flutter 3.13+, sample models and widgets use primary constructors, layout uses dot shorthands, and state renders through a `switch` expression.
 - Delete generator sample code, counter state, and placeholder TODOs in the first commit after the template commit.
